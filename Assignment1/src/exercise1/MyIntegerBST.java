@@ -7,11 +7,6 @@ public class MyIntegerBST implements A1Tree {
 	public static void main (String[] args) {
 		MyIntegerBST tree = new MyIntegerBST();
 
-		// tree.insert(10);
-		// tree.insert(11);
-		// tree.insert(12);
-		// tree.insert(9);
-
 		tree.insert(10);
 		tree.insert(7);
 		tree.insert(20);
@@ -20,7 +15,9 @@ public class MyIntegerBST implements A1Tree {
 		tree.insert(25);
 		tree.insert(8);
 
-		tree.printByLevels();
+		// tree.printByLevels();
+
+		System.out.println(tree.mostSimilarValue(9));
 	}
 
 	public void insert (Integer value) {
@@ -42,21 +39,50 @@ public class MyIntegerBST implements A1Tree {
 	}
 
 	public Integer mostSimilarValue (Integer value) {
+
+		return mostSimilarTo(value, root);
+	}
+
+	private Integer mostSimilarTo(Integer value, BinaryNode<Integer> node) {
+		if (value == node.element) { // TODO add base case +-1 ?
+			return node.element;
+		}
+
+		BinaryNode<Integer> closestMatch;
+		if (node == root) {
+			closestMatch = root.element; // TODO osnyggt
+		}
+
+
+		int nodeComparison = Math.abs(node.element - value);
+		// System.out.println(nodeComparison);
+		int leftComparison = node.left != null ? Math.abs(node.left.element - value) : 999; // TODO bad
+		// System.out.println(leftComparison);
+		int rightComparison = node.right != null ? Math.abs(node.right.element - value) : 999;
+		// System.out.println(rightComparison);
+		// System.out.println("---");
 		
-		return -1;
+		if (node.left != null) {
+			return mostSimilarTo(value, node.left);
+		}
+		if (node.right != null) {
+			return mostSimilarTo(value, node.right);
+		}
+		return closestMatch;
 	}
 	
 	public int getTreeHeight() {
 		if (root == null) {
 			return 0;
 		}	else {
-			return 1 + root.getHeight();
+			return root.getHeight();
 		}
 	}
 
 
 	public void printByLevels() {
 		int height = getTreeHeight();
+		System.out.println(height);
 		for (int i = 0; i < height; i++) {
 			System.out.print("Depth " + i + ": ");
 			printLevel(root, i);
@@ -82,12 +108,13 @@ public class MyIntegerBST implements A1Tree {
 		private BinaryNode<T> left;
 		private BinaryNode<T> right;
 		
-		private BinaryNode (T value) {
-			element = value;
+		private BinaryNode (T _element) {
+			element = _element;
 		}
 
-		private	getHeight () {
-			int leftHeight = 0, rightHeight = 0;
+		private	int getHeight () {
+			int leftHeight = 0;
+			int rightHeight = 0;
 
 			if (left != null) {
 				leftHeight = left.getHeight();
@@ -95,7 +122,8 @@ public class MyIntegerBST implements A1Tree {
 			if (right != null) {
 				rightHeight = right.getHeight();
 			}
-			return Math.max(leftHeight, rightHeight);
+
+			return 1 + Math.max(leftHeight, rightHeight);
 		}
 	}
 }
