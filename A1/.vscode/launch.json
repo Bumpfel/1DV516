@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - MyIntegerBST",
+      "request": "launch",
+      "mainClass": "exercise1.MyIntegerBST",
+      "projectName": "A1"
+    },
+    {
+      "type": "java",
       "name": "Debug (Launch) - Current File",
       "request": "launch",
       "mainClass": "${file}"

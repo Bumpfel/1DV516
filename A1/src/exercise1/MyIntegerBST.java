@@ -4,22 +4,11 @@ import assignment1AADS.A1Tree;
 
 public class MyIntegerBST implements A1Tree {
 	private BinaryNode<Integer> root;
+	private boolean debug = true;
+	// for test purposes
+	int[] testPrintArr = new int[7];
+	private int testPointer = 0;
 
-	public static void main(String[] args) throws Exception {
-		MyIntegerBST tree = new MyIntegerBST();
-
-		tree.insert(10);
-		tree.insert(7);
-		tree.insert(20);
-		tree.insert(4);
-		tree.insert(9);
-		tree.insert(25);
-		tree.insert(8);
-
-		// tree.printByLevels();
-
-		System.out.println(tree.mostSimilarValue(15));
-	}
 
 	public void insert (Integer value) {
 		root = insert(value, root);
@@ -44,24 +33,23 @@ public class MyIntegerBST implements A1Tree {
 	}
 
 	private Integer mostSimilarTo(final Integer value, BinaryNode<Integer> node, BinaryNode<Integer> closestMatch) {
+		if(node == null) {
+			return closestMatch.element;
+		}
+
+		// compare closestmatch with current node
 		if (closestMatch == null || (Math.abs(closestMatch.element - value) > Math.abs(node.element - value))) {
 			closestMatch = node;
 		}
-		
+
 		if (value < node.element) {
-			if (node.left == null) {
-				return closestMatch.element;
-			} 
-			return mostSimilarTo(value, node.left, closestMatch);
+			return mostSimilarTo(value, node.left, closestMatch); // continue searching in left node
 		}
 		if (value > node.element) {
-			if (node.right == null) {
-				return closestMatch.element;
-			}
-			return mostSimilarTo(value, node.right, closestMatch);
+			return mostSimilarTo(value, node.right, closestMatch); // continue searching in right node
 		}
 
-		return closestMatch.element;
+		return closestMatch.element; // exact match
 	}
 	
 	public int getTreeHeight() {
@@ -72,10 +60,8 @@ public class MyIntegerBST implements A1Tree {
 		}
 	}
 
-
 	public void printByLevels() {
-		int height = getTreeHeight();
-		System.out.println(height);
+		int height = getTreeHeight();	
 		for (int i = 0; i < height; i++) {
 			System.out.print("Depth " + i + ": ");
 			printLevel(root, i);
@@ -89,6 +75,7 @@ public class MyIntegerBST implements A1Tree {
 		}
 		if (depth == 0) {
 			System.out.print(node.element + " ");
+			testPrintArr[testPointer++] = node.element;
 		}
 		else if (depth > 0) {
 			printLevel(node.left, depth - 1);
