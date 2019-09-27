@@ -6,17 +6,15 @@
   "configurations": [
     {
       "type": "java",
-      "name": "CodeLens (Launch) - MyIntegerBST",
+      "name": "Debug (Launch) - Current File",
       "request": "launch",
-      "mainClass": "MyIntegerBST",
-      "console": "integratedTerminal"
+      "mainClass": "${file}"
     },
     {
       "type": "java",
-      "name": "Debug (Launch) - Current File",
+      "name": "Debug (Launch)-MyIntegerBST",
       "request": "launch",
-      "mainClass": "${file}",
-      "console": "integratedTerminal"
+      "mainClass": "MyIntegerBST"
     }
   ]
 }

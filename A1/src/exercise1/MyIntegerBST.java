@@ -1,10 +1,11 @@
+package exercise1;
+
 import assignment1AADS.A1Tree;
-import jdk.nashorn.internal.ir.BinaryNode;
 
 public class MyIntegerBST implements A1Tree {
 	private BinaryNode<Integer> root;
 
-	public static void main (String[] args) {
+	public static void main(String[] args) throws Exception {
 		MyIntegerBST tree = new MyIntegerBST();
 
 		tree.insert(10);
@@ -17,7 +18,7 @@ public class MyIntegerBST implements A1Tree {
 
 		// tree.printByLevels();
 
-		System.out.println(tree.mostSimilarValue(9));
+		System.out.println(tree.mostSimilarValue(15));
 	}
 
 	public void insert (Integer value) {
@@ -26,7 +27,7 @@ public class MyIntegerBST implements A1Tree {
 
 	private BinaryNode<Integer> insert (final Integer value, BinaryNode<Integer> node) {
 		if (node == null) {
-			return new BinaryNode(value);
+			return new BinaryNode<Integer>(value);
 		}
 
 		if (value < node.element) {
@@ -39,36 +40,28 @@ public class MyIntegerBST implements A1Tree {
 	}
 
 	public Integer mostSimilarValue (Integer value) {
-
-		return mostSimilarTo(value, root);
+		return mostSimilarTo(value, root, null);
 	}
 
-	private Integer mostSimilarTo(Integer value, BinaryNode<Integer> node) {
-		if (value == node.element) { // TODO add base case +-1 ?
-			return node.element;
+	private Integer mostSimilarTo(final Integer value, BinaryNode<Integer> node, BinaryNode<Integer> closestMatch) {
+		if (closestMatch == null || (Math.abs(closestMatch.element - value) > Math.abs(node.element - value))) {
+			closestMatch = node;
 		}
-
-		BinaryNode<Integer> closestMatch;
-		if (node == root) {
-			closestMatch = root.element; // TODO osnyggt
-		}
-
-
-		int nodeComparison = Math.abs(node.element - value);
-		// System.out.println(nodeComparison);
-		int leftComparison = node.left != null ? Math.abs(node.left.element - value) : 999; // TODO bad
-		// System.out.println(leftComparison);
-		int rightComparison = node.right != null ? Math.abs(node.right.element - value) : 999;
-		// System.out.println(rightComparison);
-		// System.out.println("---");
 		
-		if (node.left != null) {
-			return mostSimilarTo(value, node.left);
+		if (value < node.element) {
+			if (node.left == null) {
+				return closestMatch.element;
+			} 
+			return mostSimilarTo(value, node.left, closestMatch);
 		}
-		if (node.right != null) {
-			return mostSimilarTo(value, node.right);
+		if (value > node.element) {
+			if (node.right == null) {
+				return closestMatch.element;
+			}
+			return mostSimilarTo(value, node.right, closestMatch);
 		}
-		return closestMatch;
+
+		return closestMatch.element;
 	}
 	
 	public int getTreeHeight() {
