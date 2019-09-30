@@ -1,10 +1,10 @@
 package exercise1;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,6 +50,6 @@ public class BSTTest {
     assertEquals(sut.mostSimilarValue(24), Integer.valueOf(25));
     assertEquals(sut.mostSimilarValue(1), Integer.valueOf(4));
     assertEquals(sut.mostSimilarValue(9), Integer.valueOf(9));
-    assertEquals(sut.mostSimilarValue(15), Integer.valueOf(10)); // may also be 20
+    assertTrue(sut.mostSimilarValue(15) == Integer.valueOf(10) || sut.mostSimilarValue(15) == Integer.valueOf(20));
   }
 }
