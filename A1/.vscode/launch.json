@@ -6,23 +6,18 @@
   "configurations": [
     {
       "type": "java",
-      "name": "CodeLens (Launch) - MyIntegerBST",
-      "request": "launch",
-      "mainClass": "exercise1.MyIntegerBST",
-      "projectName": "A1"
-    },
-    {
-      "type": "java",
       "name": "Debug (Launch) - Current File",
       "request": "launch",
-      "mainClass": "${file}"
+      "mainClass": "${file}",
+      "console": "internalConsole"
     },
     {
       "type": "java",
       "name": "Debug (Launch)-App<A1>",
       "request": "launch",
       "mainClass": "app.App",
-      "projectName": "A1"
+      "projectName": "A1",
+      "console": "internalConsole"
     }
   ]
 }
