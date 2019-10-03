@@ -6,10 +6,10 @@ import exercise3.MyIntegerDLL;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        testPerformance(true);
-        System.out.println("---------------------");
-        testPerformance(false);
-        // testLoadPerformance();
+        // testPerformance(true);
+        // System.out.println("---------------------");
+        // testPerformance(false);
+        testLoadPerformance(10000);
     }
     
     private static void testPerformance (boolean legacyMode) {
@@ -36,26 +36,27 @@ public class App {
     }
 
 
-    private static void testLoadPerformance () {
-        MyIntegerDLL tree = new MyIntegerDLL();
-        int max = 10000;
-        int findOperations = Math.min(10000, max);
+    private static void testLoadPerformance (int insertions) {
+        System.out.println("## Running load performance test with " + insertions + " insertions");
+        MyIntegerDLL adt = new MyIntegerDLL();
+        // adt.setLegacyMode(true);
+        int findOperations = Math.min(10000, insertions);
 
         Random rand = new Random();
-        for(int i = 0; i < max; i++) {
-            tree.insertLeft(rand.nextInt(max));
+        for(int i = 0; i < insertions; i++) {
+            adt.insertLeft(rand.nextInt(insertions));
         }
         
         int temp;
         long timestamp, timeTaken = 0;
         for(int i = 0; i < findOperations; i++) {
             timestamp = System.currentTimeMillis();
-            tree.findMinimum();
+            adt.findMinimum();
             timeTaken += System.currentTimeMillis() - timestamp;
-            temp = tree.removeRight();
-            tree.insertRight(temp);
+            temp = adt.removeRight();
+            adt.insertRight(temp);
         }
         System.out.println("findMinimum() time: " + timeTaken + " ms");
-        System.out.println("find newMinimum() ran " + tree.getFindNewMinCount() + " times");
+        System.out.println("find newMinimum() ran " + adt.getFindNewMinCount() + " times");
     }
 }

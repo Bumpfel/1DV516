@@ -4,7 +4,6 @@ import assignment1AADS.A1Tree;
 
 public class MyIntegerBST implements A1Tree {
 	private BinaryNode<Integer> root;
-	private boolean debug = true;
 	// for test purposes
 	int[] testPrintArr = new int[7];
 	private int testPointer = 0;
@@ -76,8 +75,7 @@ public class MyIntegerBST implements A1Tree {
 		if (depth == 0) {
 			System.out.print(node.element + " ");
 			testPrintArr[testPointer++] = node.element;
-		}
-		else if (depth > 0) {
+		} else if (depth > 0) {
 			printLevel(node.left, depth - 1);
 			printLevel(node.right, depth - 1);
 		}

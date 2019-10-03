@@ -6,12 +6,19 @@ public class MyIntegerDLL implements A1SequenceWithMinimum {
   private Node head;
   private Node tail;
   private Node minimumNode;
-  private boolean alwaysRunSearch = false;
+  private int size;
+  private boolean alwaysRunSearch = false; // to test legacy mode
 
   public void setLegacyMode(boolean enabled) { alwaysRunSearch = enabled; }
 
   public boolean isEmpty () {
-    return head == null;
+    return size == 0;
+    // return head == null;
+  }
+
+  private boolean containsOneElement () {
+    return size == 1;
+    // return head != null && head.next == null;
   }
 
   public void insertLeft (Integer value) {
@@ -25,6 +32,7 @@ public class MyIntegerDLL implements A1SequenceWithMinimum {
       newNode.next = head;
       head = newNode;
     }
+    size++;
   }
 
   public void insertRight (Integer value) {
@@ -38,34 +46,37 @@ public class MyIntegerDLL implements A1SequenceWithMinimum {
       newNode.prev = tail;
       tail = newNode;
     }
+    size++;
   }
 
   public Integer removeLeft () {
     Node removedNode = head;
-    if(head.next == null) {
+    if(containsOneElement()) {
       lastRemoval();
     } else {
       head = head.next;
       head.prev = null;
     }
     decideMinimumNode(removedNode);
+    size--;
     return removedNode.value;
   }
   
 	public Integer removeRight () {
     Node removedNode = tail;
-    if(tail.prev == null) {
+    if(containsOneElement()) {
       lastRemoval();
     } else {
       tail = tail.prev;
       tail.next = null;
     }
     decideMinimumNode(removedNode);
+    size--;
     return removedNode.value;
   }
 
   public Integer findMinimum () {
-    if (alwaysRunSearch)
+    if (minimumNode == null || alwaysRunSearch)
       return findNewMinimum().value;
     return minimumNode.value;
   }
@@ -122,7 +133,8 @@ public class MyIntegerDLL implements A1SequenceWithMinimum {
 
   private void decideMinimumNode (Node removedNode) {
     if (removedNode == minimumNode && !alwaysRunSearch) {
-      minimumNode = findNewMinimum();
+      minimumNode = null;
+      // minimumNode = findNewMinimum();
     }
   }
 
