@@ -8,6 +8,10 @@ public class MyIntegerBST implements A1Tree {
 	int[] testPrintArr = new int[7];
 	private int testPointer = 0;
 
+	public static void main(String[] args) {
+		MyIntegerBST tree = new MyIntegerBST();
+		tree.printByLevels();
+	}
 
 	public void insert (Integer value) {
 		root = insert(value, root);
@@ -50,34 +54,34 @@ public class MyIntegerBST implements A1Tree {
 
 		return closestMatch.element; // exact match
 	}
-	
-	public int getTreeHeight() {
-		if (root == null) {
-			return 0;
-		}	else {
-			return root.getHeight();
-		}
-	}
 
-	public void printByLevels() {
-		int height = getTreeHeight();	
-		for (int i = 0; i < height; i++) {
-			System.out.print("Depth " + i + ": ");
-			printLevel(root, i);
-			System.out.println();
-		}
-	} 
-
-	private void printLevel(BinaryNode<Integer> node, int depth) {
-		if (node == null) {
+	public void printByLevels () {
+		if (root == null)
 			return;
-		}
-		if (depth == 0) {
-			System.out.print(node.element + " ");
-			testPrintArr[testPointer++] = node.element;
-		} else if (depth > 0) {
-			printLevel(node.left, depth - 1);
-			printLevel(node.right, depth - 1);
+		
+		MyQueue<BinaryNode<Integer>> q = new MyQueue<BinaryNode<Integer>>();
+		q.add(root);
+
+		while (!q.isEmpty()) {
+			int nodesOnThisLevel = q.size(); // since child nodes are added to the same queue, we must keep track of where the level ends
+			StringBuilder str = new StringBuilder();
+
+			while (nodesOnThisLevel > 0) {
+				BinaryNode<Integer> node = q.poll();
+				str.append(node.element + ", ");
+
+				testPrintArr[testPointer++] = node.element;
+
+				if (node.left != null)
+					q.add(node.left);
+				if (node.right != null)
+					q.add(node.right);
+				nodesOnThisLevel--;
+			}
+			if (str.length() >= 2) {
+				str.setLength(str.length() - 2);
+			}
+			System.out.println(str);
 		}
 	}
 	
@@ -88,20 +92,6 @@ public class MyIntegerBST implements A1Tree {
 		
 		private BinaryNode (T _element) {
 			element = _element;
-		}
-
-		private	int getHeight () {
-			int leftHeight = 0;
-			int rightHeight = 0;
-
-			if (left != null) {
-				leftHeight = left.getHeight();
-			}
-			if (right != null) {
-				rightHeight = right.getHeight();
-			}
-
-			return 1 + Math.max(leftHeight, rightHeight);
 		}
 	}
 }

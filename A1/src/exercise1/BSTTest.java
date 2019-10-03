@@ -12,7 +12,7 @@ import org.junit.Test;
 public class BSTTest {
   
   private static MyIntegerBST sut;
-  private boolean debug = false;
+  private boolean debug = true;
   
   @BeforeClass
   public static void setup () {

@@ -2,7 +2,7 @@ package app;
 
 import java.util.Random;
 
-import exercise3.MyIntegerDLL;
+import exercise3.SequenceWithMinimum;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -15,7 +15,7 @@ public class App {
     private static void testPerformance (boolean legacyMode) {
         System.out.println("## Running performance test with legacy mode " + (legacyMode ? "on" : "off") + " ##");
 
-        MyIntegerDLL adt = new MyIntegerDLL();
+        SequenceWithMinimum adt = new SequenceWithMinimum();
         adt.setLegacyMode(legacyMode);
         int insertions = 10000;
 
@@ -38,7 +38,7 @@ public class App {
 
     private static void testLoadPerformance (int insertions) {
         System.out.println("## Running load performance test with " + insertions + " insertions");
-        MyIntegerDLL adt = new MyIntegerDLL();
+        SequenceWithMinimum adt = new SequenceWithMinimum();
         // adt.setLegacyMode(true);
         int findOperations = Math.min(10000, insertions);
 

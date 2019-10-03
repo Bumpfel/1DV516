@@ -2,7 +2,7 @@ package exercise3;
 
 import assignment1AADS.A1SequenceWithMinimum;
 
-public class MyIntegerDLL implements A1SequenceWithMinimum {
+public class SequenceWithMinimum implements A1SequenceWithMinimum {
   private Node head;
   private Node tail;
   private Node minimumNode;

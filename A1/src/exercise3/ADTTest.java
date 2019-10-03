@@ -6,14 +6,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DLLTest {
+public class ADTTest {
   
-  private static MyIntegerDLL sut;
+  private static SequenceWithMinimum sut;
   private boolean debug = false;
   
   @Before
   public void setup () {
-    sut = new MyIntegerDLL();
+    sut = new SequenceWithMinimum();
   }
 
   @Before
@@ -44,7 +44,7 @@ public class DLLTest {
     sut.insertRight(5);
     sut.insertRight(4);
     sut.insertRight(15);
-
+    
     String expected = "{ 5, 4, 15 }";
     String actual = sut.toString();
     assertEquals(expected, actual);
