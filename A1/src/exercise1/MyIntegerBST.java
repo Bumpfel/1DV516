@@ -10,6 +10,12 @@ public class MyIntegerBST implements A1Tree {
 
 	public static void main(String[] args) {
 		MyIntegerBST tree = new MyIntegerBST();
+		tree.insert(4);
+		tree.insert(10);
+		tree.insert(2);
+		tree.insert(12);
+		tree.insert(8);
+		tree.insert(9);
 		tree.printByLevels();
 	}
 
@@ -19,16 +25,48 @@ public class MyIntegerBST implements A1Tree {
 
 	private BinaryNode<Integer> insert (final Integer value, BinaryNode<Integer> node) {
 		if (node == null) {
-			return new BinaryNode<Integer>(value);
+			BinaryNode<Integer> newNode = new BinaryNode<>(value);
+			
+			return newNode;
 		}
 
 		if (value < node.element) {
 			node.left = insert(value, node.left);
+			node.height = node.left.height + 1;
 		} else if (value > node.element) {
 			node.right = insert(value, node.right);
+			node.height = node.right.height + 1;
 		}
+		
+		// auto balancing
+		// If this node becomes unbalanced, then there 
+		// are 4 cases Left Left Case 
+		if (getNodeBalance(node) > 1 && value < node.left.element) 
+				return rightRotate(node);
 
+		// Right Right Case 
+		if (getNodeBalance(node) < -1 && value > node.right.element) 
+				return leftRotate(node); 
+
+		// Left Right Case 
+		if (getNodeBalance(node) > 1 && value > node.left.element) { 
+				node.left = leftRotate(node.left); 
+				return rightRotate(node); 
+		} 
+
+		// Right Left Case
+		if (getNodeBalance(node) < -1 && value < node.right.element) { 
+				node.right = rightRotate(node.right); 
+				return leftRotate(node); 
+		}
 		return node;
+	}
+
+	private int getNodeBalance (BinaryNode<Integer> node) {
+		int leftHeight = node.left != null ? node.left.height + 1 : 0;
+		int rightHeight = node.right != null ? node.right.height + 1 : 0;
+
+		return leftHeight - rightHeight;
 	}
 
 	public Integer mostSimilarValue (Integer value) {
@@ -68,7 +106,7 @@ public class MyIntegerBST implements A1Tree {
 
 			while (nodesOnThisLevel > 0) {
 				BinaryNode<Integer> node = q.poll();
-				str.append(node.element + ", ");
+				str.append(node.element + "(" + node.height + "), ");
 
 				testPrintArr[testPointer++] = node.element;
 
@@ -84,11 +122,54 @@ public class MyIntegerBST implements A1Tree {
 			System.out.println(str);
 		}
 	}
+
+	private int getNodeHeight(BinaryNode<Integer> node) {
+		if (node == null)
+			return 0;
+		return node.height;
+	}
+	
+	private void updateChildrenHeights (BinaryNode<Integer> node) {
+		node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
+	}
+
+	private BinaryNode<Integer> rightRotate(BinaryNode<Integer> y) {
+		System.out.println("right rotation of " + y.element);
+		BinaryNode<Integer> x = y.left; 
+		BinaryNode<Integer> T2 = x.right;
+
+		// Perform rotation 
+		x.right = y; 
+		y.left = T2; 
+
+		updateChildrenHeights(x);
+		updateChildrenHeights(y);
+
+		// Return new root 
+		return x; 
+}
+
+private BinaryNode<Integer> leftRotate(BinaryNode<Integer> x) {
+	System.out.println("left rotation of " + x.element);
+	BinaryNode<Integer> y = x.right; 
+	BinaryNode<Integer> T2 = y.left; 
+
+		// Perform rotation 
+		y.left = x; 
+		x.right = T2; 
+
+		updateChildrenHeights(x);
+		updateChildrenHeights(y);
+
+		// Return new root 
+		return y; 
+} 
 	
 	private class BinaryNode<T> {
 		private T element;
 		private BinaryNode<T> left;
 		private BinaryNode<T> right;
+		private int height = 0;
 		
 		private BinaryNode (T _element) {
 			element = _element;
