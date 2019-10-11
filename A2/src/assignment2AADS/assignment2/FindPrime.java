@@ -5,16 +5,15 @@ public class FindPrime {
   public static void main(String[] args) {
 
     long timestamp = System.currentTimeMillis();
-    int prime = 1; //, i = 0;
+    // int prime = 1; //, i = 0;
     // while(i < 1000) {
-    for(int i = 0; i < 1000; i++) {
-      prime = findNextPrime(prime);
-      System.out.println(prime);
-      i ++;
-    }
-    // printPrimeSieve(30);
+    // for(int i = 0; i < 10; i++) {
+    //   prime = findNextPrime(prime + 1);
+    //   System.out.println(prime);
+    // }
+    printPrimeSieve(20);
     long timeTaken = System.currentTimeMillis() - timestamp;
-    System.out.println("----time taken: " + timeTaken + "ms");
+    // System.out.println("----time taken: " + timeTaken + "ms");
 
   }
 
@@ -30,21 +29,19 @@ public class FindPrime {
           prime[i] = false;
         }
       }
+    }
 
-      for (int i = 2; i <= n; i++) {
-        if (prime[i])
-          System.out.println(i);
-      }
+    for (int i = 2; i <= n; i++) {
+      if (prime[i])
+        System.out.println(i);
     }
   }
 
-
   private static int findNextPrime(int n) {
-    n ++;
     if (isPrime(n)) {
       return n;
     }
-    return findNextPrime(n);
+    return findNextPrime(n + 1);
   }
  
   private static boolean isPrime(int n) {
