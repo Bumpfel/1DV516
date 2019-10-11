@@ -2,6 +2,21 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - FindPrime",
+      "request": "launch",
+      "mainClass": "assignment2AADS.assignment2.FindPrime",
+      "projectName": "A2",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - TestHashTable",
+      "request": "launch",
+      "mainClass": "tests.TestHashTable",
+      "projectName": "A2"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - MyHashTable",
       "request": "launch",
       "mainClass": "assignment2AADS.assignment2.MyHashTable",
