@@ -1,9 +1,7 @@
 package tests;
 
-
-
 import assignment2AADS.assignment2.A2HashTable;
-import assignment2AADS.assignment2.MyHashTable;
+import exercise1.*;
 
 class TestHashTable {
 
