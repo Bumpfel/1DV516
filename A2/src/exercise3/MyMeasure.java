@@ -1,6 +1,7 @@
 package exercise3;
 
 import assignment2AADS.assignment2.A2Measure;
+import tools.SimpleIntList;
 
 public class MyMeasure implements A2Measure {
 
@@ -24,7 +25,7 @@ public class MyMeasure implements A2Measure {
   @Override
   public int minDifferences(int[] array1, int[] array2) {
     if (array1.length != array2.length) {
-      throw new IllegalArgumentException("Arrays are not of equals length");
+      throw new IllegalArgumentException("The arrays are not of equal length");
     }
  
     array1 = mergeSort(array1);
@@ -45,60 +46,53 @@ public class MyMeasure implements A2Measure {
 
     arr = mergeSort(arr);
     int highestValue = arr[arr.length - 1];
+    System.out.println(highestValue);
     int lowestValue = arr[0];
     double ratio = 100 / (highestValue - lowestValue);
 
     double lowerBound = Math.floor(lower / ratio);
     double upperBound = Math.ceil(upper / ratio);
-
-    int[] filteredArray = new int[100];
-    int sz = 0;
-    // TODO better search (filter) for lower and upper bounds
-    // System.out.println("params (" + lower + ", " + upper + ") - filtering array to include ints > " + lowerBound + " and <= " + upperBound);
+    
+    SimpleIntList filteredList = new SimpleIntList();
     for(int i = 0; i < arr.length; i++) {
       if (arr[i] > lowerBound && arr[i] <= upperBound) {
-        filteredArray[sz] = arr[i];
-        sz ++;
+        filteredList.add(arr[i]);
       }
     }
-    int[] trimmedFilteredArray = new int[sz];
-    for(int i = 0; i < sz; i ++) {
-      trimmedFilteredArray[i] = filteredArray[i];
-    }
 
-    return trimmedFilteredArray;
+    return filteredList.toArray();
   }
 
   private int[] mergeSort (int[] in) {
-    //Splitting the array in two parts. first will be equal or 1 unit smaller than second
-    int[] sorted = new int[in.length];
-    int[] first = new int[in.length / 2];
-    int[] second = new int[in.length - first.length];
+    // Splitting the array in two parts. first will be equal or 1 unit smaller than second
+    int[] sortedArr = new int[in.length];
+    int[] firstHalf = new int[in.length / 2];
+    int[] secondHalf = new int[in.length - firstHalf.length];
 
-    for(int i = 0; i < first.length; i ++)
-      first[i] = in[i];
-    for(int i = 0; i < second.length; i ++)
-      second[i] = in[first.length + i];
+    for(int i = 0; i < firstHalf.length; i ++)
+      firstHalf[i] = in[i];
+    for(int i = 0; i < secondHalf.length; i ++)
+      secondHalf[i] = in[firstHalf.length + i];
 
     // Calls itself recursively if the array is at least 2 units long, making sure the array is split down to the smallest fragment before starting to sort
-    if(first.length > 1)
-      first = mergeSort(first);
-    if(second.length > 1)
-      second = mergeSort(second);
+    if(firstHalf.length > 1)
+      firstHalf = mergeSort(firstHalf);
+    if(secondHalf.length > 1)
+      secondHalf = mergeSort(secondHalf);
 
     // Sorting
-    int f = 0, s = 0;
-    while(f < first.length || s < second.length) {
-      if(f == first.length) 				// If first array is depleted, add all elements from second
-        sorted[f + s] = second[s ++];
-      else if(s == second.length) 		// Vice versa
-        sorted[f + s] = first[f ++];
-      else if(first[f] < second[s]) 		// If element from first is smaller than element from second, add element from first and increase first compare index
-        sorted[f + s] = first[f ++];
-      else 								// Vice versa
-        sorted[f + s] = second[s ++];
+    int firstPos = 0, secondPos = 0;
+    while(firstPos < firstHalf.length || secondPos < secondHalf.length) {
+      if(firstPos == firstHalf.length)           // If first array is depleted, add all elements from second
+        sortedArr[firstPos + secondPos] = secondHalf[secondPos ++];
+      else if(secondPos == secondHalf.length) 		// Vice versa
+        sortedArr[firstPos + secondPos] = firstHalf[firstPos ++];
+      else if(firstHalf[firstPos] < secondHalf[secondPos]) 	// If element from first is smaller than element from second, add element from first and increase first compare index
+        sortedArr[firstPos + secondPos] = firstHalf[firstPos ++];
+      else 								            // Vice versa
+        sortedArr[firstPos + secondPos] = secondHalf[secondPos ++];
     }
-    return sorted;
-  } 
+    return sortedArr;
+  }
   
 }

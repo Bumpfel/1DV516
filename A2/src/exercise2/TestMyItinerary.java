@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import assignment2AADS.assignment2.A2Direction;
+import tools.SimpleIntList;
 
 public class TestMyItinerary {
   private MyItinerary sut;

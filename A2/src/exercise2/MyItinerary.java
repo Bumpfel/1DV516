@@ -3,6 +3,7 @@ package exercise2;
 import assignment2AADS.assignment2.A2Direction;
 import assignment2AADS.assignment2.A2Itinerary;
 import exercise1.MyHashTable;
+import tools.SimpleIntList;
 
 public class MyItinerary implements A2Itinerary<A2Direction> {
 
@@ -117,37 +118,5 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
     public String toString() {
       return x + ", " + y;
     }
-  }
-}
-
-class SimpleIntList {
-  private int[] list = new int[10];
-  private int size = 0;
-
-  public int size () { return size; }
-
-  private void resize() {
-    int[] tempList = list;
-    list = new int[list.length * 2];
-    
-    for (int i = 0; i < tempList.length; i++) {
-      list[i] = tempList[i];
-    }
-  }
-  
-  public void add(int n) {
-    if(size == list.length) {
-      resize();
-    }
-    list[size] = n;
-    size ++;
-  }
-
-  public int[] toArray() {
-    int[] copy = new int[size];
-    for (int i = 0; i < size; i++) {
-      copy[i] = list[i];
-    }
-    return copy;
   }
 }
