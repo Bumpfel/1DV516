@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import assignment2AADS.assignment2.A2HashTable;
 
+// Allows for duplicates
 public class MyHashTable<T> implements A2HashTable<T> {
   private final double MAX_LOAD;
 
@@ -106,7 +107,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   private int getKey (int hash, int i) {
     return (hash + (int) Math.pow(i, 2)) % mElements.length;
-    // return (hash + (int) Math.pow(i, 2) + i) / 2 % elements.length;
+    // return (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length;
   }
 
   private int findNextPrimeFrom (int n) {

@@ -1,7 +1,5 @@
 package exercise2;
 
-import java.util.Arrays; // only used for toString()
-
 import assignment2AADS.assignment2.A2Direction;
 import assignment2AADS.assignment2.A2Itinerary;
 import exercise1.MyHashTable;
@@ -12,21 +10,6 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
   private final int[] mIntersections;
   private final int mWidth;
   private final int mHeight;
-
-  public static void main(String[] args) {
-    A2Direction[] array = new A2Direction[6];
-    array[0] = A2Direction.LEFT;
-		array[1] = A2Direction.DOWN;
-		array[2] = A2Direction.DOWN;
-		array[3] = A2Direction.RIGHT;
-		array[4] = A2Direction.UP;
-    array[5] = A2Direction.LEFT;
-    
-    MyItinerary itinerary = new MyItinerary(array);
-    
-    System.out.println(itinerary);
-    System.out.println(Arrays.toString(itinerary.rotateRight()));
-  }
   
   public MyItinerary (A2Direction[] array) {
     mDirections = array;
@@ -46,10 +29,9 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
   @Override
   public int[] getIntersections() { return mIntersections; }
 
-
   /**
    * Returns an array of directions of the itinerary rotated right
-   * Does not modify the original. To use these values as the starting point, create a new itinerary with the return values
+   * Does not modify the original. To use these values as the starting point, create a new itinerary with the returned array
    */
   @Override
   public A2Direction[] rotateRight() {
@@ -61,7 +43,6 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
     }
     return rotatedDirections;
   }
-
 
   private int calcSize (A2Direction dir1, A2Direction dir2) {
     int max = 0;
@@ -79,16 +60,13 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
     return max - min;
   }
 
-
-
   private int[] calcIntersections () {
     MyHashTable<Coordinate> coords = new MyHashTable<>(.5);
 
     int hPos = 0;
     int vPos = 0;
     Coordinate coord;
-    int intersections = 0;
-    // int[] intersections = new int[mDirections.length];
+    SimpleIntList intersectionIndices = new SimpleIntList();
 
     int index = 0;
     for(A2Direction direction : mDirections) {
@@ -102,26 +80,15 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
         hPos ++;
 
       coord = new Coordinate(hPos, vPos);
-      // System.out.println("inserting " + coord + ". hashCode " + coord.hashCode());
       if (coords.contains(coord)) {
-        System.out.println("intersection at " + index);
-        intersections ++;
+        intersectionIndices.add(index);
       }
       coords.insert(coord);
       index ++;
     }
 
-    // System.out.println(coords);
-    System.out.println("found " + intersections + " intersections");
-
-    return null;
+    return intersectionIndices.toArray();
   }
-
-  @Override
-  public String toString () {
-    return Arrays.toString(mDirections);
-  }
-  
 
   class Coordinate {
     Integer x;
@@ -150,5 +117,37 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
     public String toString() {
       return x + ", " + y;
     }
+  }
+}
+
+class SimpleIntList {
+  private int[] list = new int[10];
+  private int size = 0;
+
+  public int size () { return size; }
+
+  private void resize() {
+    int[] tempList = list;
+    list = new int[list.length * 2];
+    
+    for (int i = 0; i < tempList.length; i++) {
+      list[i] = tempList[i];
+    }
+  }
+  
+  public void add(int n) {
+    if(size == list.length) {
+      resize();
+    }
+    list[size] = n;
+    size ++;
+  }
+
+  public int[] toArray() {
+    int[] copy = new int[size];
+    for (int i = 0; i < size; i++) {
+      copy[i] = list[i];
+    }
+    return copy;
   }
 }

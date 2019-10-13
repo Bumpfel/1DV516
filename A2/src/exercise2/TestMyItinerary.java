@@ -15,32 +15,31 @@ public class TestMyItinerary {
 
   @Before
   public void setup () {
-    A2Direction[] array = new A2Direction[6];
-    array[0] = A2Direction.LEFT;
-    array[1] = A2Direction.DOWN;
-    array[2] = A2Direction.DOWN;
-    array[3] = A2Direction.RIGHT;
-    array[4] = A2Direction.UP;
-    array[5] = A2Direction.LEFT;
+    ArrayList<A2Direction> list = new ArrayList<>();
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.UP);
+    list.add(A2Direction.LEFT);
     
-    sut = new MyItinerary(array);
+    sut = new MyItinerary(list.toArray(new A2Direction[list.size()]));
   }
 
   private void alternateSetup () {
-    ArrayList<A2Direction> arrList = new ArrayList<>();
-    arrList.add(A2Direction.LEFT);
-    arrList.add(A2Direction.DOWN);
-    arrList.add(A2Direction.DOWN);
-    arrList.add(A2Direction.RIGHT);
-    arrList.add(A2Direction.DOWN);
-    arrList.add(A2Direction.LEFT);
-    arrList.add(A2Direction.UP);
-    arrList.add(A2Direction.LEFT);
-    arrList.add(A2Direction.UP);
-    arrList.add(A2Direction.RIGHT);
-    arrList.add(A2Direction.UP);
+    ArrayList<A2Direction> list = new ArrayList<>();
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.UP);
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.UP);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.UP);
 
-    sut = new MyItinerary(arrList.toArray(new A2Direction[arrList.size()]));
+    sut = new MyItinerary(list.toArray(new A2Direction[list.size()]));
   }
 
   @Test
@@ -84,12 +83,52 @@ public class TestMyItinerary {
   public void testIntersections () {
     int[] expected = { 5 };
     int[] actual = sut.getIntersections();
-    // assertEquals(Arrays.toString(expected), Arrays.toString(actual));
+    assertEquals(Arrays.toString(expected), Arrays.toString(actual));
     
-    // alternateSetup();
+    alternateSetup();
     expected = new int[] { 5, 8 };
-    // actual = sut.getIntersections();
-    // assertEquals(Arrays.toString(expected), Arrays.toString(actual));
+    actual = sut.getIntersections();
+    assertEquals(Arrays.toString(expected), Arrays.toString(actual));
+  }
+
+  @Test
+  public void testIntersections2 () {
+    ArrayList<A2Direction> list = new ArrayList<>();
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.UP); //x 5
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.RIGHT); //x 8
+    list.add(A2Direction.DOWN);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.UP); //x 11
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.UP);
+    list.add(A2Direction.LEFT); //x 14
+
+    sut = new MyItinerary(list.toArray(new A2Direction[list.size()]));
+    int[] expected = { 5, 8, 11, 14 };
+    int[] actual = sut.getIntersections();
+    assertEquals(Arrays.toString(expected), Arrays.toString(actual));
+  }
+
+  
+  @Test
+  public void testIntList() {
+    SimpleIntList list = new SimpleIntList();
+    int expected = 0;
+    int actual = list.size();
+    assertEquals(expected, actual);
+    expected = 14;
+    for(int i = 0; i < expected; i++) {
+      list.add(i);
+    }
+    actual = list.size();
+    assertEquals(expected, actual);
   }
 
 }
