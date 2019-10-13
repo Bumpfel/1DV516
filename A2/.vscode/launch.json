@@ -2,6 +2,14 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - MyItinerary",
+      "request": "launch",
+      "mainClass": "exercise2.MyItinerary",
+      "projectName": "A2",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - FindPrime",
       "request": "launch",
       "mainClass": "assignment2AADS.assignment2.FindPrime",

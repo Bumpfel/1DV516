@@ -67,7 +67,7 @@ public class TestMyHashTable {
     populateTable();
 
     assertFalse(sut.contains("newString"));
-    assertFalse(sut.contains("test"));
+    assertTrue(sut.contains("test"));
 
     String str = new String("aString");
     sut.insert(str);

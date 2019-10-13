@@ -7,25 +7,25 @@ import assignment2AADS.assignment2.A2HashTable;
 public class MyHashTable<T> implements A2HashTable<T> {
   private final double MAX_LOAD;
 
-  private T[] elements;
-  private int size;
-  private boolean hasRehashed = false;
+  private T[] mElements;
+  private int mSize;
+  private boolean mHasRehashed = false;
 
-  public boolean hasRehashed () { return hasRehashed; } // for junit testing
+  public boolean hasRehashed () { return mHasRehashed; } // for junit testing
 
   @SuppressWarnings("unchecked")
   public MyHashTable (double maxLoad) {
     MAX_LOAD = maxLoad;
-    elements = (T[]) new Object[11];
+    mElements = (T[]) new Object[11];
   }
 
   @Override
   public int getLengthOfArray () {
-    return elements.length;
+    return mElements.length;
   }
 
   public int size() {
-    return size;
+    return mSize;
   }
 
   @Override
@@ -34,21 +34,21 @@ public class MyHashTable<T> implements A2HashTable<T> {
     if (index < 0) {
       throw new NoSuchElementException();
     }
-    elements[index] = null;
-    size--;
+    mElements[index] = null;
+    mSize--;
   }
 
   @Override
   public void insert (T element) {
-    double currentLoad = (double) size / elements.length;
+    double currentLoad = (double) mSize / mElements.length;
     int key = findFreeCell(element);
     if (currentLoad > MAX_LOAD || key < 0) {
       rehash();
       insert(element);
       return;
     }
-    elements[key] = element;
-    size++;
+    mElements[key] = element;
+    mSize++;
   }
 
   @Override
@@ -58,29 +58,29 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   @SuppressWarnings("unchecked")
   private void rehash () {
-    T[] oldArray = elements;
-    int prime = findNextPrimeFrom(elements.length * 2 + 1); // finds the next prime number that is at least twice the size of the old array
-    elements = (T[]) new Object[prime];
+    T[] oldArray = mElements;
+    int prime = findNextPrimeFrom(mElements.length * 2 + 1); // finds the next prime number that is at least twice the size of the old array
+    mElements = (T[]) new Object[prime];
 
-    size = 0;
+    mSize = 0;
     for (T element : oldArray) {
       if (element != null) {
         insert(element);
       }
     }
-    hasRehashed = true;
+    mHasRehashed = true;
   }
 
   public int indexOf (T element) {
     int hash = Math.abs(element.hashCode());
     int i = 0;
     int key;
-    while (i < elements.length) {
+    while (i < mElements.length) {
       key = getKey(hash, i);
-      if (key < 0 || elements[key] == null) {
+      if (key < 0 || mElements[key] == null) {
         break;
       }
-      if (elements[key] == element) {
+      if (mElements[key].equals(element)) {
         return key;
       }
       i++;
@@ -95,17 +95,17 @@ public class MyHashTable<T> implements A2HashTable<T> {
     int key;
     do {
       key = getKey(hash, i);
-      if (i == elements.length) { // no empty cell could be found
+      if (i == mElements.length) { // no empty cell could be found
         return -1;
       }
       i++;
-    } while (elements[key] != null);
+    } while (mElements[key] != null);
 
     return key;
   }
 
   private int getKey (int hash, int i) {
-    return (hash + (int) Math.pow(i, 2)) % elements.length;
+    return (hash + (int) Math.pow(i, 2)) % mElements.length;
     // return (hash + (int) Math.pow(i, 2) + i) / 2 % elements.length;
   }
 
@@ -125,10 +125,10 @@ public class MyHashTable<T> implements A2HashTable<T> {
   @Override
   public String toString () {
     StringBuilder str = new StringBuilder();
-    for (int i = 0; i < elements.length; i++) {
+    for (int i = 0; i < mElements.length; i++) {
       str.append("[" + i + "] ");
-      if (elements[i] != null) {
-        str.append(elements[i]);
+      if (mElements[i] != null) {
+        str.append(mElements[i]);
       }
       str.append("\n");
     }
