@@ -25,7 +25,7 @@ public class MyMeasure implements A2Measure {
   @Override
   public int minDifferences(int[] array1, int[] array2) {
     if (array1.length != array2.length) {
-      throw new IllegalArgumentException("The arrays are not of equal length");
+      throw new IllegalArgumentException("The arrays must be of equal length");
     }
  
     array1 = mergeSort(array1);
@@ -46,7 +46,6 @@ public class MyMeasure implements A2Measure {
 
     arr = mergeSort(arr);
     int highestValue = arr[arr.length - 1];
-    System.out.println(highestValue);
     int lowestValue = arr[0];
     double ratio = 100 / (highestValue - lowestValue);
 

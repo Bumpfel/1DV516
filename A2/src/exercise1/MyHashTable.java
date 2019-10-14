@@ -42,7 +42,10 @@ public class MyHashTable<T> implements A2HashTable<T> {
   @Override
   public void insert (T element) {
     double currentLoad = (double) mSize / mElements.length;
-    int key = findFreeCell(element);
+    int key = -1;
+    if (currentLoad < MAX_LOAD) {
+      key = findFreeCell(element);
+    }
     if (currentLoad > MAX_LOAD || key < 0) {
       rehash();
       insert(element);
@@ -96,7 +99,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
     int key;
     do {
       key = getKey(hash, i);
-      if (i == mElements.length) { // no empty cell could be found
+      if (i == Math.ceil(mElements.length / 2)) { // no empty cell could be found
         return -1;
       }
       i++;
@@ -107,7 +110,6 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   private int getKey (int hash, int i) {
     return (hash + (int) Math.pow(i, 2)) % mElements.length;
-    // return (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length;
   }
 
   private int findNextPrimeFrom (int n) {

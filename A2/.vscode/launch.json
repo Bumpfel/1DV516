@@ -2,6 +2,14 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - MyHashTable",
+      "request": "launch",
+      "mainClass": "exercise1.MyHashTable",
+      "projectName": "A2",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - MyItinerary",
       "request": "launch",
       "mainClass": "exercise2.MyItinerary",

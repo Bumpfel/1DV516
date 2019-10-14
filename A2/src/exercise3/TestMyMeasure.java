@@ -63,5 +63,14 @@ public class TestMyMeasure {
     actual = sut.getPercentileRange(arr, 0, 100);
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
   }
+
+  @Test
+  public void performanceTest () {
+    int[] arr = new int[100000];
+
+    for(int i = 0; i < arr.length; i ++) {
+      
+    }
+  }
  
 }

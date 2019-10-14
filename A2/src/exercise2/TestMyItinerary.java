@@ -117,6 +117,23 @@ public class TestMyItinerary {
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
   }
 
+  @Test
+  public void testIntersections3 () {
+    ArrayList<A2Direction> list = new ArrayList<>();
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.RIGHT);
+    list.add(A2Direction.LEFT);
+    list.add(A2Direction.RIGHT);
+
+    sut = new MyItinerary(list.toArray(new A2Direction[list.size()]));
+    int[] expected = { 1, 2, 3, 4, 5 };
+    int[] actual = sut.getIntersections();
+    System.out.println(Arrays.toString(actual));
+    assertEquals(Arrays.toString(expected), Arrays.toString(actual));
+  }
+
   
   @Test
   public void testIntList() {

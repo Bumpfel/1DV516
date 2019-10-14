@@ -8,27 +8,34 @@ import tools.SimpleIntList;
 public class MyItinerary implements A2Itinerary<A2Direction> {
 
   private final A2Direction[] mDirections;
-  private final int[] mIntersections;
-  private final int mWidth;
-  private final int mHeight;
+  private int[] mIntersections;
+  private int mWidth = -1;
+  private int mHeight = -1;
   
   public MyItinerary (A2Direction[] array) {
     mDirections = array;
-    
-    mWidth = calcSize(A2Direction.LEFT, A2Direction.RIGHT);
-    mHeight = calcSize(A2Direction.UP, A2Direction.DOWN);
-
-    mIntersections = calcIntersections();
   }
 
   @Override
-  public int widthOfItinerary() { return mWidth; }
+  public int widthOfItinerary() { 
+    if(mWidth == -1) // only calculate once
+      mWidth = calcSize(A2Direction.LEFT, A2Direction.RIGHT);
+    return mWidth;
+  }
   
   @Override
-  public int heightOfItinerary() { return mHeight; }
+  public int heightOfItinerary() { 
+    if(mHeight == -1) // only calculate once
+      mHeight = calcSize(A2Direction.UP, A2Direction.DOWN);
+    return mHeight;
+  }
 
   @Override
-  public int[] getIntersections() { return mIntersections; }
+  public int[] getIntersections() { 
+    if(mIntersections == null) // only calculate once
+      mIntersections = calcIntersections();
+    return mIntersections;
+  }
 
   /**
    * Returns an array of directions of the itinerary rotated right
@@ -66,9 +73,10 @@ public class MyItinerary implements A2Itinerary<A2Direction> {
 
     int hPos = 0;
     int vPos = 0;
-    Coordinate coord;
+    Coordinate coord = new Coordinate(hPos, vPos);
+    coords.insert(coord);
+    
     SimpleIntList intersectionIndices = new SimpleIntList();
-
     int index = 0;
     for(A2Direction direction : mDirections) {
       if(direction == A2Direction.UP)
