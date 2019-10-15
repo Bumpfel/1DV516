@@ -77,16 +77,39 @@ public class TestMyHashTable {
   
   @Test(expected = NoSuchElementException.class)
   public void testDelete () {
-    populateTable();
-    
-    String str2 = new String("test");
+    String str2 = new String("somethingUnique");
     sut.insert(str2);
     int sizeBeforeRemoval = sut.size();
     sut.delete(str2);
     
+    System.out.println(sut);
     assertFalse(sut.contains(str2));
     assertTrue(sut.size() == sizeBeforeRemoval - 1);
     
     sut.delete("doesnotexist");
+
   }
+
+  @Test
+  public void testDelete2 () {
+    String str2 = new String("somethingUnique");
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.delete(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.insert(str2);
+    sut.delete(str2);
+    System.out.println(sut);
+    
+    assertTrue(sut.contains(str2));
+  }
+
 }
