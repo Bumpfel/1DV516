@@ -71,7 +71,7 @@ public class TestMyHashTable {
 
     String str = new String("aString");
     sut.insert(str);
-    System.out.println(sut);
+    // System.out.println(sut);
     assertTrue(sut.contains(str));
   }
   
@@ -82,7 +82,7 @@ public class TestMyHashTable {
     int sizeBeforeRemoval = sut.size();
     sut.delete(str2);
     
-    System.out.println(sut);
+    // System.out.println(sut);
     assertFalse(sut.contains(str2));
     assertTrue(sut.size() == sizeBeforeRemoval - 1);
     
@@ -96,6 +96,7 @@ public class TestMyHashTable {
     sut.insert(str2);
     sut.insert(str2);
     sut.delete(str2);
+
     sut.insert(str2);
     sut.insert(str2);
     sut.insert(str2);
@@ -107,7 +108,7 @@ public class TestMyHashTable {
     sut.insert(str2);
     sut.insert(str2);
     sut.delete(str2);
-    System.out.println(sut);
+    // System.out.println(sut);
     
     assertTrue(sut.contains(str2));
   }
