@@ -1,11 +1,13 @@
 package exercise1;
 
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import assignment2AADS.assignment2.A2HashTable;
 
 public class MyHashTable<T> implements A2HashTable<T> {
+  private static final int NO_FREE_CELL_FOUND = -1;
+  private static final int ELEMENT_EXISTS = -2;
+
   private final double MAX_LOAD;
 
   private Object[] mElements;
@@ -38,22 +40,23 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   @Override
   public void insert (T element) {
-    if (contains(element)) {
-      return;
-    }
+    // if (contains(element)) {
+    //   return;
+    // }
     double currentLoad = (double) mSize / mElements.length;
-    int key = -1;
+    int freeCell = -1;
     if (currentLoad < MAX_LOAD) {
-      key = findFreeCell(element);
-    } else {
-      System.out.println("MAX LOAD factor reached " + currentLoad);
+      freeCell = findFreeCell(element);
     }
-    if (currentLoad > MAX_LOAD || key < 0) {
+    if (currentLoad > MAX_LOAD || freeCell == NO_FREE_CELL_FOUND) {
       rehash();
       insert(element);
       return;
     }
-    mElements[key] = element;
+    if (freeCell == ELEMENT_EXISTS) {
+      return;
+    }
+    mElements[freeCell] = element;
     mSize++;
   }
 
@@ -83,8 +86,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
     int i = 0;
     int key;
 
-    // while (i < Math.ceil(mElements.length / 2)) {
-    while (i < Math.ceil(mElements.length)) {
+    while (i < mElements.length) {
       key = getKey(hash, i);
       if (key < 0 || mElements[key] == null) {
         break;
@@ -104,11 +106,13 @@ public class MyHashTable<T> implements A2HashTable<T> {
     int key;
     do {
       key = getKey(hash, i);
-      // if (i == Math.ceil(mElements.length / 2)) {
-      if (i == Math.ceil(mElements.length)) {
-        // no empty cell could be found
-        return -1;
+      if (i == mElements.length) {
+        return NO_FREE_CELL_FOUND;
       }
+      if (mElements[key] != null && mElements[key].equals(element)) {
+        return ELEMENT_EXISTS;
+      }
+      
       i++;
     } while (mElements[key] != null || mElements[key] instanceof MyHashTable.DeletedNode);
 
