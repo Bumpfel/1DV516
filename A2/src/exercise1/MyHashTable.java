@@ -1,22 +1,20 @@
 package exercise1;
 
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import assignment2AADS.assignment2.A2HashTable;
 
-// Allows for duplicates
 public class MyHashTable<T> implements A2HashTable<T> {
   private final double MAX_LOAD;
 
   private Object[] mElements;
   private int mSize;
-  private boolean mHasRehashed = false;
-
-  public boolean hasRehashed () { return mHasRehashed; } // for junit testing
 
   public MyHashTable (double maxLoad) {
     MAX_LOAD = maxLoad;
-    mElements = new Object[11];
+    // mElements = new Object[11];
+    mElements = new Object[8]; // must be a power of two with current key algorithm
   }
   
   @Override
@@ -40,10 +38,15 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   @Override
   public void insert (T element) {
+    if (contains(element)) {
+      return;
+    }
     double currentLoad = (double) mSize / mElements.length;
     int key = -1;
     if (currentLoad < MAX_LOAD) {
       key = findFreeCell(element);
+    } else {
+      System.out.println("MAX LOAD factor reached " + currentLoad);
     }
     if (currentLoad > MAX_LOAD || key < 0) {
       rehash();
@@ -62,8 +65,10 @@ public class MyHashTable<T> implements A2HashTable<T> {
   @SuppressWarnings("unchecked")
   private void rehash () {
     Object[] oldArray = mElements;
-    int prime = findNextPrimeFrom(mElements.length * 2 + 1); // finds the next prime number that is at least twice the size of the old array
-    mElements = (T[]) new Object[prime];
+    // int prime = findNextPrimeFrom(mElements.length * 2 + 1); // finds the next prime number that is at least twice the size of the old array
+    // mElements = (T[]) new Object[prime];
+    
+    mElements = (T[]) new Object[mElements.length * 2];
 
     mSize = 0;
     for (Object element : oldArray) {
@@ -71,14 +76,15 @@ public class MyHashTable<T> implements A2HashTable<T> {
         insert((T) element);
       }
     }
-    mHasRehashed = true;
   }
 
   public int indexOf (T element) {
     int hash = Math.abs(element.hashCode());
     int i = 0;
     int key;
-    while (i < Math.ceil(mElements.length / 2)) {
+
+    // while (i < Math.ceil(mElements.length / 2)) {
+    while (i < Math.ceil(mElements.length)) {
       key = getKey(hash, i);
       if (key < 0 || mElements[key] == null) {
         break;
@@ -98,7 +104,9 @@ public class MyHashTable<T> implements A2HashTable<T> {
     int key;
     do {
       key = getKey(hash, i);
-      if (i == Math.ceil(mElements.length / 2)) { // no empty cell could be found
+      // if (i == Math.ceil(mElements.length / 2)) {
+      if (i == Math.ceil(mElements.length)) {
+        // no empty cell could be found
         return -1;
       }
       i++;
@@ -108,13 +116,14 @@ public class MyHashTable<T> implements A2HashTable<T> {
   }
 
   private int getKey (int hash, int i) {
-    return (hash + (int) Math.pow(i, 2)) % mElements.length;
+    // return (hash + (int) Math.pow(i, 2)) % mElements.length; // can visit half of the cells if array length is a prime
+    return (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length; // can visit all cells if array length is a power of 2
   }
 
+  // not used
   private int findNextPrimeFrom (int n) {
     return isPrime(n) ? n : findNextPrimeFrom(n + 1);
   }
-
   private boolean isPrime (int n) {
     for (int i = 2; i < n; i++) {
       if (n % i == 0) {

@@ -56,9 +56,12 @@ public class TestMyHashTable {
     int initialArraySize = sut.getLengthOfArray();
     assertTrue(initialArraySize > sut.size());
 
-    while(!sut.hasRehashed()) {
-      sut.insert("test");
+    for(int i = 0; i < initialArraySize; i++) {
+      sut.insert("" + i);
     }
+    // while(!sut.hasRehashed()) {
+    //   sut.insert(Math.random);
+    // }
     assertTrue(sut.getLengthOfArray() > initialArraySize);
   }
   
@@ -71,46 +74,24 @@ public class TestMyHashTable {
 
     String str = new String("aString");
     sut.insert(str);
-    // System.out.println(sut);
     assertTrue(sut.contains(str));
   }
   
   @Test(expected = NoSuchElementException.class)
   public void testDelete () {
-    String str2 = new String("somethingUnique");
+    String str1 = new String("somethingUnique");
+    String str2 = new String("somethingElseUnique");
+    sut.insert(str1);
     sut.insert(str2);
     int sizeBeforeRemoval = sut.size();
-    sut.delete(str2);
+    sut.delete(str1);
     
-    // System.out.println(sut);
-    assertFalse(sut.contains(str2));
+    System.out.println(sut);
+
+    assertFalse(sut.contains(str1));
+    assertTrue(sut.contains(str2));
     assertTrue(sut.size() == sizeBeforeRemoval - 1);
     
     sut.delete("doesnotexist");
-
   }
-
-  @Test
-  public void testDelete2 () {
-    String str2 = new String("somethingUnique");
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.delete(str2);
-
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.insert(str2);
-    sut.delete(str2);
-    // System.out.println(sut);
-    
-    assertTrue(sut.contains(str2));
-  }
-
 }
