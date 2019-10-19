@@ -130,7 +130,6 @@ public class TestMyItinerary {
     sut = new MyItinerary(list.toArray(new A2Direction[list.size()]));
     int[] expected = { 1, 2, 3, 4, 5 };
     int[] actual = sut.getIntersections();
-    System.out.println(Arrays.toString(actual));
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
   }
 

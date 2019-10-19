@@ -51,7 +51,7 @@ public class TestMyMeasure {
     int[] actual = sut.getPercentileRange(arr, 0, 10);
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
       
-    expected = new int[] { 4, 6, 8, 10 }; // TODO does not need to be ordered
+    expected = new int[] { 4, 6, 8, 10 };
     actual = sut.getPercentileRange(arr, 10, 50);
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
     
@@ -62,15 +62,6 @@ public class TestMyMeasure {
     expected = new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
     actual = sut.getPercentileRange(arr, 0, 100);
     assertEquals(Arrays.toString(expected), Arrays.toString(actual));
-  }
-
-  @Test
-  public void performanceTest () {
-    int[] arr = new int[100000];
-
-    for(int i = 0; i < arr.length; i ++) {
-      
-    }
   }
  
 }

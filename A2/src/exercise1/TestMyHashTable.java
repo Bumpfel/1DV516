@@ -15,26 +15,6 @@ public class TestMyHashTable {
   public void setup () {
     sut = new MyHashTable<>(.75);
   }
-  
-  private void populateTable () { 
-    String obj1 = new String("test");
-    String obj2 = new String("test2");
-    String obj3 = new String("test");
-
-    sut.insert(obj2);
-    sut.insert(obj1);
-    sut.insert(obj1);
-    sut.insert(obj2);
-    sut.insert(obj2);
-    sut.insert(obj3);
-    sut.insert(obj3);
-    sut.insert(obj1);
-    sut.insert(obj1);
-    sut.insert(obj1);
-    sut.insert(obj1);
-    sut.insert(obj1);
-    sut.insert(obj3);
-  }
 
   @Test
   public void testInsert () {
@@ -56,25 +36,18 @@ public class TestMyHashTable {
     int initialArraySize = sut.getLengthOfArray();
     assertTrue(initialArraySize > sut.size());
 
-    for(int i = 0; i < initialArraySize; i++) {
+    for(int i = 0; i < initialArraySize * sut.MAX_LOAD + 1; i++) {
       sut.insert("" + i);
     }
-    // while(!sut.hasRehashed()) {
-    //   sut.insert(Math.random);
-    // }
     assertTrue(sut.getLengthOfArray() > initialArraySize);
   }
   
   @Test 
   public void testContains () {
-    populateTable();
+    sut.insert("test");
 
     assertFalse(sut.contains("newString"));
     assertTrue(sut.contains("test"));
-
-    String str = new String("aString");
-    sut.insert(str);
-    assertTrue(sut.contains(str));
   }
   
   @Test(expected = NoSuchElementException.class)
@@ -85,8 +58,6 @@ public class TestMyHashTable {
     sut.insert(str2);
     int sizeBeforeRemoval = sut.size();
     sut.delete(str1);
-    
-    System.out.println(sut);
 
     assertFalse(sut.contains(str1));
     assertTrue(sut.contains(str2));

@@ -5,17 +5,16 @@ import java.util.NoSuchElementException;
 import assignment2AADS.assignment2.A2HashTable;
 
 public class MyHashTable<T> implements A2HashTable<T> {
-  private static final int NO_FREE_CELL_FOUND = -1;
-  private static final int ELEMENT_EXISTS = -2;
+  private static final int NO_FREE_CELL_FOUND = -1, ELEMENT_NOT_FOUND = -1, ELEMENT_ALREADY_EXISTS = -2;
 
-  private final double MAX_LOAD;
+  public final double MAX_LOAD;
 
   private Object[] mElements;
   private int mSize;
 
   public MyHashTable (double maxLoad) {
     MAX_LOAD = maxLoad;
-    // mElements = new Object[11];
+    // mElements = new Object[11]; // prime sized
     mElements = new Object[8]; // must be a power of two with current key algorithm
   }
   
@@ -30,7 +29,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
   
   @Override
   public void delete (T element) {
-    int index = indexOf(element);
+    int index = search(element, true);
     if (index < 0) {
       throw new NoSuchElementException();
     }
@@ -40,20 +39,17 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   @Override
   public void insert (T element) {
-    // if (contains(element)) {
-    //   return;
-    // }
     double currentLoad = (double) mSize / mElements.length;
     int freeCell = -1;
     if (currentLoad < MAX_LOAD) {
-      freeCell = findFreeCell(element);
+      freeCell = search(element, false);
     }
     if (currentLoad > MAX_LOAD || freeCell == NO_FREE_CELL_FOUND) {
       rehash();
       insert(element);
       return;
     }
-    if (freeCell == ELEMENT_EXISTS) {
+    if (freeCell == ELEMENT_ALREADY_EXISTS) {
       return;
     }
     mElements[freeCell] = element;
@@ -62,7 +58,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
 
   @Override
   public boolean contains(T element) {
-    return indexOf(element) >= 0;
+    return search(element, true) >= 0;
   }
 
   @SuppressWarnings("unchecked")
@@ -81,48 +77,30 @@ public class MyHashTable<T> implements A2HashTable<T> {
     }
   }
 
-  public int indexOf (T element) {
+  public int search (T element, boolean searchForElement) {
     int hash = Math.abs(element.hashCode());
     int i = 0;
     int key;
 
     while (i < mElements.length) {
       key = getKey(hash, i);
-      if (key < 0 || mElements[key] == null) {
-        break;
+      if (mElements[key] == null || mElements[key] instanceof MyHashTable.DeletedNode) {
+        return searchForElement ? ELEMENT_NOT_FOUND : key;
       }
-      if (mElements[key].equals(element)) {
-        return key;
+      if(mElements[key].equals(element)) {
+        return searchForElement ? key : ELEMENT_ALREADY_EXISTS;
       }
       i++;
     }
     return -1;
   }
 
-  private int findFreeCell (T element) {
-    int hash = Math.abs(element.hashCode());
-
-    int i = 0;
-    int key;
-    do {
-      key = getKey(hash, i);
-      if (i == mElements.length) {
-        return NO_FREE_CELL_FOUND;
-      }
-      if (mElements[key] != null && mElements[key].equals(element)) {
-        return ELEMENT_EXISTS;
-      }
-      
-      i++;
-    } while (mElements[key] != null || mElements[key] instanceof MyHashTable.DeletedNode);
-
-    return key;
-  }
-
   private int getKey (int hash, int i) {
-    // return (hash + (int) Math.pow(i, 2)) % mElements.length; // can visit half of the cells if array length is a prime
+    // return (hash + (int) Math.pow(i, 2)) % mElements.length; // can visit half of the cells (rounded up) if array length is a prime
     return (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length; // can visit all cells if array length is a power of 2
   }
+
+
 
   // not used
   private int findNextPrimeFrom (int n) {
