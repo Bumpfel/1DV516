@@ -30,7 +30,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
   @Override
   public void delete (T element) {
     int index = search(element, true);
-    if (index < 0) {
+    if (index == ELEMENT_NOT_FOUND) {
       throw new NoSuchElementException();
     }
     mElements[index] = new DeletedNode();
@@ -77,27 +77,45 @@ public class MyHashTable<T> implements A2HashTable<T> {
     }
   }
 
-  public int search (T element, boolean searchForElement) {
+  /**
+   * Searches for a free cell for the element or the element itself. 
+   * In searching for a free cell it also checks whether the table already contains an equals object
+   * @param element
+   * @param searchForElement decides whether the method should search for a free cell or the element itself
+   * @return
+   */
+  private int search (T element, boolean searchForElement) {
     int hash = Math.abs(element.hashCode());
     int i = 0;
-    int key;
 
     while (i < mElements.length) {
-      key = getKey(hash, i);
-      if (mElements[key] == null || mElements[key] instanceof MyHashTable.DeletedNode) {
-        return searchForElement ? ELEMENT_NOT_FOUND : key;
+      // int index = (hash + (int) Math.pow(i, 2)) % mElements.length; // can visit half of the cells (rounded up) if array length is a prime
+      int index = (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length; // can visit all cells if array length is a power of 2
+      if (mElements[index] == null) {
+        return searchForElement ? ELEMENT_NOT_FOUND : index;
       }
-      if(mElements[key].equals(element)) {
-        return searchForElement ? key : ELEMENT_ALREADY_EXISTS;
+      if (!searchForElement && mElements[index] instanceof MyHashTable.DeletedNode) {
+        return index;
+      }
+      if(mElements[index].equals(element)) {
+        return searchForElement ? index : ELEMENT_ALREADY_EXISTS;
       }
       i++;
     }
     return -1;
   }
 
-  private int getKey (int hash, int i) {
-    // return (hash + (int) Math.pow(i, 2)) % mElements.length; // can visit half of the cells (rounded up) if array length is a prime
-    return (hash + (int) Math.pow(i, 2) + i) / 2 % mElements.length; // can visit all cells if array length is a power of 2
+  @Override
+  public String toString () {
+    StringBuilder str = new StringBuilder();
+    for (int i = 0; i < mElements.length; i++) {
+      str.append("[" + i + "] ");
+      if (mElements[i] != null) {
+        str.append(mElements[i]);
+      }
+      str.append("\n");
+    }
+    return str.toString();
   }
 
 
@@ -115,19 +133,7 @@ public class MyHashTable<T> implements A2HashTable<T> {
     return true;
   }
 
-  @Override
-  public String toString () {
-    StringBuilder str = new StringBuilder();
-    for (int i = 0; i < mElements.length; i++) {
-      str.append("[" + i + "] ");
-      if (mElements[i] != null) {
-        str.append(mElements[i]);
-      }
-      str.append("\n");
-    }
-    return str.toString();
-  }
-
+  
 
   class DeletedNode {
     @Override

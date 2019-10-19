@@ -52,6 +52,26 @@ public class TestMyHashTable {
   
   @Test(expected = NoSuchElementException.class)
   public void testDelete () {
+    // first part finds two strings with the same hashcode. 
+    // inserts them both, deletes the first, and makes sure that the second one can be found 
+    String str = "test";
+    int strHash = str.hashCode() % sut.getLengthOfArray();
+    int i = 0;
+    String otherStr;
+    int sameHash;
+    while(true) {
+      otherStr = "" + i;
+      sameHash = otherStr.hashCode() % sut.getLengthOfArray();
+      if (strHash == sameHash) {
+        break;
+      }
+      i++;
+    }
+    sut.insert(str);
+    sut.insert(otherStr);
+    sut.delete(str);
+    assertTrue(sut.contains(otherStr));
+
     String str1 = new String("somethingUnique");
     String str2 = new String("somethingElseUnique");
     sut.insert(str1);
