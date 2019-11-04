@@ -1,5 +1,8 @@
 package exercise1;
 
+// TODO höll på med sist: måste hitta ett hållbart sätt att veta om en undirected array är acyclic. 
+// använde tidigare ett visited-fält i vertex-klassen, men det blev dumt
+
 import assignment3AADS.assignment3.A3Graph;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +12,8 @@ import java.util.Set;
 import java.util.Stack;
 
 public abstract class Graph implements A3Graph {
-    private HashMap<Integer, List<Integer>> connectedVertices = new HashMap<>(); // TODO kanske ha Vertex istället för Integer om fördel. blir lite mer omanvändarbart
-    private Integer someVertex; // save a reference to have somewhere to start
+    private HashMap<Vertex, List<Vertex>> connectedVertices = new HashMap<>();
+    private Vertex someVertex; // save a reference to have somewhere to start
 
     public int size() { return connectedVertices.size(); }
 
@@ -25,43 +28,46 @@ public abstract class Graph implements A3Graph {
     public void addVertex(int vertex) {
 
         if(someVertex == null) {
-            someVertex = vertex;
+            someVertex = new Vertex(vertex);
         }
-        connectedVertices.putIfAbsent(vertex, new ArrayList<>());
+        connectedVertices.putIfAbsent(new Vertex(vertex), new ArrayList<>());
     }
 
     public void addEdge(int sourceVertex, int targetVertex) {
-        if(sourceVertex >= connectedVertices.size() || targetVertex >= connectedVertices.size() ||
-         (connectedVertices.get(sourceVertex) == null && connectedVertices.get(targetVertex) == null)) {
-            throw new IllegalArgumentException("Cannot add edge");
+        List<Vertex> sourceVertexEdges = connectedVertices.get(new Vertex(sourceVertex));
+        List<Vertex> targetVertexEdges = connectedVertices.get(new Vertex(targetVertex));
+
+        if(sourceVertexEdges == null || targetVertexEdges == null) {
+            throw new IllegalArgumentException("Cannot add edge. Vertex does not exist");
         }
 
-        connectedVertices.get(sourceVertex).add(targetVertex);
+        sourceVertexEdges.add(new Vertex(targetVertex));
         if(this instanceof MyUndirectedGraph) {
-            connectedVertices.get(targetVertex).add(sourceVertex);
+            targetVertexEdges.add(new Vertex(sourceVertex));
         }
     }
 
-    private Set<Integer> depthFirstTraversal(boolean stopOnCyclic) { 
+    private Set<Vertex> depthFirstTraversal(boolean stopOnCyclic) {
         if(connectedVertices.isEmpty()) {
             return null;
         }
 
-        Set<Integer> visited = new LinkedHashSet<>();
-        Stack<Integer> stack = new Stack<>();
+        Set<Vertex> visited = new LinkedHashSet<>();
+        Stack<Vertex> stack = new Stack<>();
         stack.push(someVertex);
         while (!stack.isEmpty()) {
-            int vertex = stack.pop();
-            System.out.println(vertex);
+            Vertex vertex = stack.pop();
             if (!visited.contains(vertex)) {
                 visited.add(vertex);
-                for (Integer connectedVertex : connectedVertices.get(vertex)) {
+                for (Vertex connectedVertex : connectedVertices.get(vertex)) {
                     stack.push(connectedVertex);
                 }
-            } else if(stopOnCyclic) {
-                System.out.println("stopped on " + vertex);
-                System.out.println("cyclic");
-                // throw new IllegalArgumentException();
+            } else if(stopOnCyclic ) {
+                if(this instanceof MyDirectedGraph) {
+                    throw new IllegalArgumentException();
+                } else if(this instanceof MyUndirectedGraph) {
+                    throw new IllegalArgumentException();
+                }
             }
         }
         return visited;
@@ -79,9 +85,9 @@ public abstract class Graph implements A3Graph {
 
     public boolean isConnected() {
         // in the case of MyDirectedGraph, isConnected() returns true if the graph is strongly connected
-        Set<Integer> visitedVertices = depthFirstTraversal(false);
+        Set<Vertex> visitedVertices = depthFirstTraversal(false);
         if(visitedVertices.size() < connectedVertices.size())
-        for(Integer vertex : connectedVertices.keySet()) {
+        for(Vertex vertex : connectedVertices.keySet()) {
             if(!visitedVertices.contains(vertex)) {
                 return false;
             }
@@ -101,12 +107,31 @@ public abstract class Graph implements A3Graph {
     }
     // Implement in each class a method connectedComponents() that returns a List of Lists of integers (List<List<Integer>> connectedComponents()) that returns the nodes in each connected component of the graph (in the case of MyDirectedGraph, in each strongly connected component). Next figure shows examples of what connectedComponents() should return for directed and for undirected graphs. 
 
-    class Vertex { // TODO ta bort om inte används
+    class Vertex {
         int value;
-        boolean wasVisited = false;
 
         Vertex(int vertexValue) {
             value = vertexValue;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(o instanceof Vertex) {
+                Vertex otherObject = (Vertex) o;
+                return value == otherObject.value;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            Integer iValue = value;
+            return iValue.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "" + value;
         }
     }
 

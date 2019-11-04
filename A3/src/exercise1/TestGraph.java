@@ -3,15 +3,16 @@ package exercise1;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestGraph {
-    private static Graph sut;
+    private Graph sut;
 
-    @BeforeClass
-    public static void setup() {
+    @Before
+    public void setup() { 
         sut = new MyUndirectedGraph();
+        // sut = new MyDirectedGraph();
     }
 
     private void addElementsToGraph(int n) {
@@ -21,18 +22,13 @@ public class TestGraph {
         }
     }
 
-    // @Test
-    // public void testaddVertex() {
-    //     assertTrue(sut.size() == 0);
-    //     sut.addVertex(1);
-    //     assertTrue(sut.size() == 1);
-    // }
-
-    // @Test
-    // public void testaddEdge() {
-    //     sut.addVertex(vertex);
-    //     sut.addEdge(sourceVertex, targetVertex);
-    // }
+    @Test
+    public void tempTest() {
+        sut.addVertex(1);
+        sut.addVertex(2);
+        sut.addEdge(1, 2);
+        System.out.println(sut);
+    }
 
     @Test
     public void testIsConnected() {
@@ -55,21 +51,25 @@ public class TestGraph {
             sut.addEdge(i, i + 1);
         }
         assertTrue(sut.isAcyclic());
-        System.out.println(sut);
         
         sut.addEdge(4, 1);
         assertFalse(sut.isAcyclic());
+        System.out.println(sut);
     }
 
     @Test
     public void testIsAcyclic2() {
         addElementsToGraph(5);
         
-        for(int i = 0; i < 3; i ++) {
+        for(int i = 0; i < 4; i ++) {
             sut.addEdge(i, i + 1);
         }
-        addElementsToGraph(1);
-        sut.addEdge(1, 4);
+        sut.isAcyclic();
+        // sut.addVertex(100);
+        // sut.addVertex(101);
+        // sut.addEdge(100, 101);
+        
+        sut.addEdge(4, 1);
         assertTrue(sut.isAcyclic());
         System.out.println(sut);
     }
