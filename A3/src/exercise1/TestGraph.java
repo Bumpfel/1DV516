@@ -23,14 +23,6 @@ public class TestGraph {
     }
 
     @Test
-    public void tempTest() {
-        sut.addVertex(1);
-        sut.addVertex(2);
-        sut.addEdge(1, 2);
-        System.out.println(sut);
-    }
-
-    @Test
     public void testIsConnected() {
         addElementsToGraph(5);
 
@@ -55,8 +47,8 @@ public class TestGraph {
         assertTrue(sut.isAcyclic());
         
         sut.addEdge(4, 1);
-        assertFalse(sut.isAcyclic());
         System.out.println(sut);
+        assertFalse(sut.isAcyclic());
     }
 
     @Test

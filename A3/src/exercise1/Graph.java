@@ -6,14 +6,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 public abstract class Graph implements A3Graph {
-    private HashMap<Vertex, List<Vertex>> vertices = new HashMap<>();
+    private HashMap<Vertex, List<Vertex>> adjacentVertices = new HashMap<>();
     private boolean isAcyclic = true;
-    private boolean isConnected = false;
+    private boolean isConnected;
 
-    public int size() { return vertices.size(); }
+    public int size() { return adjacentVertices.size(); }
 
     public static void main(String[] args) throws Exception {
         Graph graph = new MyUndirectedGraph();
@@ -31,17 +30,17 @@ public abstract class Graph implements A3Graph {
         graph.addEdge(100, 1);
 
         graph.isAcyclic();
-        
-        System.out.println(graph);
+
+        // graph.connectedComponents();
     }
 
     public void addVertex(int vertex) {
-        vertices.putIfAbsent(new Vertex(vertex), new ArrayList<>());
+        adjacentVertices.putIfAbsent(new Vertex(vertex), new ArrayList<>());
     }
 
     public void addEdge(int sourceVertex, int targetVertex) {
-        List<Vertex> sourceVertexEdges = vertices.get(new Vertex(sourceVertex));
-        List<Vertex> targetVertexEdges = vertices.get(new Vertex(targetVertex));
+        List<Vertex> sourceVertexEdges = adjacentVertices.get(new Vertex(sourceVertex));
+        List<Vertex> targetVertexEdges = adjacentVertices.get(new Vertex(targetVertex));
 
         if(sourceVertexEdges == null || targetVertexEdges == null) {
             throw new IllegalArgumentException("Cannot add edge. Vertex does not exist");
@@ -53,66 +52,30 @@ public abstract class Graph implements A3Graph {
         }
     }
 
-    private Set<Vertex> traverse(Vertex startVertex) {
-        if(vertices.isEmpty()) {
-            return null;
-        }
+    private Set<Vertex> recursiveTraversal(Vertex vertex, Set<Vertex> visited, Vertex parent) {
+        visited.add(vertex);
 
-        Set<Vertex> visited = new HashSet<>();
-        Stack<Vertex> stack = new Stack<>();
-        stack.push(startVertex);
-        Vertex prev = null;
-        while (!stack.isEmpty()) {
-            Vertex vertex = stack.pop();
-            // System.out.println(
-            if (!visited.contains(vertex)) {
-                visited.add(vertex);
-                for (Vertex connectedVertex : vertices.get(vertex)) {
-                    if(!connectedVertex.equals(prev)) {
-                        System.out.println("going to " + connectedVertex + " from " + vertex + ". prev was " + prev);
-                        stack.push(connectedVertex);
-                    }
-                    else {
-                        System.out.println("stopping traversal to " + connectedVertex + " from " + vertex);
-                    }
+        for(Vertex connectedVertex : adjacentVertices.get(vertex)) {
+            if(!connectedVertex.equals(parent)) {
+                if(visited.contains(connectedVertex)) {
+                    isAcyclic = false;
+                } else {
+                    recursiveTraversal(connectedVertex, visited, vertex);
                 }
-                prev = vertex;
-            } else {
-                System.out.println("determined from vertex: " + vertex + " that graph is cyclic");
-                isAcyclic = false;
             }
         }
-        isConnected = visited.containsAll(vertices.keySet());
+        isConnected = visited.containsAll(adjacentVertices.keySet());
         return visited;
     }
-
-
-    void recursiveTraversal(Vertex vertex, HashMap<Vertex, Boolean> visited, Vertex parent) {
-        visited.put(vertex, true);
-
-        
-    }
     
-    void analyzeGraph() {
-        // Set<Vertex> visited = new HashSet<>();
-        // int traversals = 0;
-        // for(Vertex vertex : vertices.keySet()) {
-        //     if(!visited.contains(vertex)) {
-        //         System.out.println("## TRAVERSAL " + (++traversals) + ". starting on " + vertex);
-        //         visited = traverse(vertex);
-        //     }
-        // }
-        
-        
-        HashMap<Vertex, Boolean> visited = new HashMap<>();
-        Vertex root = null;
-        for(Vertex vertex : vertices.keySet()) {
-            if(root == null) {
-                root = vertex;
+    private void analyzeGraph() {
+        Set<Vertex> visited = new HashSet<>();
+        for(Vertex vertex : adjacentVertices.keySet()) {
+            if(visited.contains(vertex)) {
+                continue;
             }
-            visited.put(vertex, false);
+            visited = recursiveTraversal(vertex, new HashSet<>(), null);
         }
-        recursiveTraversal(root, visited, null);
     }
 
 
@@ -123,26 +86,18 @@ public abstract class Graph implements A3Graph {
     }
 
     public boolean isConnected() {
-        // in the case of MyDirectedGraph, isConnected() returns true if the graph is strongly connected
-        // Set<Vertex> visitedVertices = traverse(false);
-        // if(visitedVertices.size() < connectedVertices.size()) {
-        //     return false;
-        // }
-        // return visitedVertices.containsAll(connectedVertices.keySet());
-
         analyzeGraph();
         return isConnected;
     }
 
 
     public List<List<Integer>> connectedComponents() {
-
         return new ArrayList<>();
     }
 
     @Override
     public String toString() {
-        return vertices.toString();
+        return adjacentVertices.toString();
     }
     // Implement in each class a method connectedComponents() that returns a List of Lists of integers (List<List<Integer>> connectedComponents()) that returns the nodes in each connected component of the graph (in the case of MyDirectedGraph, in each strongly connected component). Next figure shows examples of what connectedComponents() should return for directed and for undirected graphs. 
 
