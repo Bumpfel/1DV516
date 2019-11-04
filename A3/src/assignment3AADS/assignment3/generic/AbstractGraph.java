@@ -8,6 +8,7 @@ import java.util.Set;
 
 public abstract class AbstractGraph<T> implements A3Graph<T> {
     private HashMap<T, List<T>> adjacentVertices = new HashMap<>();
+    // private List<List<T>> adjacentVertices = new List<>();
     private boolean isAcyclic = true;
     private boolean isConnected;
 
@@ -71,9 +72,8 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
 
 
     public List<List<T>> connectedComponents() {
-        // System.out.println(adjacentVertices);
-        // ArrayList<List<Integer>>
-        return new ArrayList<>();
+        List<List<T>> ret = new ArrayList<>();
+        return ret;
     }
 
     @Override
