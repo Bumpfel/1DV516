@@ -1,4 +1,4 @@
-package exercise1;
+package assignment3AADS.assignment3.MyTests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -6,13 +6,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import assignment3AADS.assignment3.generic.AbstractGraph;
+import assignment3AADS.assignment3.generic.MyDirectedGraph;
+import assignment3AADS.assignment3.generic.MyUndirectedGraph;
+
 public class TestGraph {
-    private Graph sut;
+    private AbstractGraph<Integer> sut;
 
     @Before
     public void setup() { 
-        sut = new MyUndirectedGraph();
-        // sut = new MyDirectedGraph();
+        sut = new MyUndirectedGraph<Integer>();
+        // sut = new MyDirectedGraph<Integer>();
     }
 
     private void addElementsToGraph(int n) {
@@ -47,7 +51,7 @@ public class TestGraph {
         assertTrue(sut.isAcyclic());
         
         sut.addEdge(4, 1);
-        System.out.println(sut);
+        // System.out.println(sut);
         assertFalse(sut.isAcyclic());
     }
 
@@ -62,7 +66,7 @@ public class TestGraph {
         sut.addVertex(100);
         sut.addEdge(100, 1);
         
-        System.out.println(sut);
+        // System.out.println(sut);
         assertTrue(sut.isAcyclic());
     }
 }
