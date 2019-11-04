@@ -6,6 +6,14 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - Graph",
+      "request": "launch",
+      "mainClass": "exercise1.Graph",
+      "projectName": "A3",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
       "name": "Debug (Launch) - Current File",
       "request": "launch",
       "mainClass": "${file}",

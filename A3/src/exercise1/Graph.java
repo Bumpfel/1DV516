@@ -6,6 +6,7 @@ package exercise1;
 import assignment3AADS.assignment3.A3Graph;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.Stack;
 public abstract class Graph implements A3Graph {
     private HashMap<Vertex, List<Vertex>> connectedVertices = new HashMap<>();
     private Vertex someVertex; // save a reference to have somewhere to start
-
+    
     public int size() { return connectedVertices.size(); }
 
     public static void main(String[] args) throws Exception {
@@ -23,6 +24,8 @@ public abstract class Graph implements A3Graph {
         for(int i = 0; i < 5; i ++) {
             graph.addVertex(i);
         }
+
+        graph.analyzeGraph();
     }
 
     public void addVertex(int vertex) {
@@ -40,23 +43,25 @@ public abstract class Graph implements A3Graph {
         if(sourceVertexEdges == null || targetVertexEdges == null) {
             throw new IllegalArgumentException("Cannot add edge. Vertex does not exist");
         }
-
+        
         sourceVertexEdges.add(new Vertex(targetVertex));
         if(this instanceof MyUndirectedGraph) {
             targetVertexEdges.add(new Vertex(sourceVertex));
         }
     }
 
-    private Set<Vertex> depthFirstTraversal(boolean stopOnCyclic) {
+    private Set<Vertex> traverse(boolean stopOnCyclic) {
         if(connectedVertices.isEmpty()) {
             return null;
         }
 
-        Set<Vertex> visited = new LinkedHashSet<>();
+        Set<Vertex> visited = new HashSet<>();
+        Set<Vertex> visitedTwice = new HashSet<>();
         Stack<Vertex> stack = new Stack<>();
         stack.push(someVertex);
         while (!stack.isEmpty()) {
             Vertex vertex = stack.pop();
+            System.out.println("visiting " + vertex);
             if (!visited.contains(vertex)) {
                 visited.add(vertex);
                 for (Vertex connectedVertex : connectedVertices.get(vertex)) {
@@ -66,7 +71,10 @@ public abstract class Graph implements A3Graph {
                 if(this instanceof MyDirectedGraph) {
                     throw new IllegalArgumentException();
                 } else if(this instanceof MyUndirectedGraph) {
-                    throw new IllegalArgumentException();
+                    if(visitedTwice.contains(vertex)) {
+                        throw new IllegalArgumentException();
+                    }
+                    visitedTwice.add(vertex);
                 }
             }
         }
@@ -74,9 +82,33 @@ public abstract class Graph implements A3Graph {
     }
 
 
+    private boolean isCyclic;
+    private boolean isConnected = false;
+
+    public void analyzeGraph() {
+        
+        while(true) {
+            HashSet<Vertex> visited = new HashSet<>();
+            for(Vertex vertex : connectedVertices.keySet()) {
+                visited.add(vertex);
+            }
+            if(visited.containsAll(connectedVertices.keySet())) {
+                System.out.println("contains all");
+                isConnected = true;
+                break;
+            }
+
+        }
+    }
+
+
     public boolean isAcyclic() {
+        // TODO måste traversera alla vertices (kan finnas de som ej är anslutna med starten)
+        Set<Vertex> visitedVertices = traverse(false);
+
+
         try {
-            depthFirstTraversal(true);
+            traverse(true);
         } catch(IllegalArgumentException e) {
             return false;
         }
@@ -85,14 +117,14 @@ public abstract class Graph implements A3Graph {
 
     public boolean isConnected() {
         // in the case of MyDirectedGraph, isConnected() returns true if the graph is strongly connected
-        Set<Vertex> visitedVertices = depthFirstTraversal(false);
-        if(visitedVertices.size() < connectedVertices.size())
-        for(Vertex vertex : connectedVertices.keySet()) {
-            if(!visitedVertices.contains(vertex)) {
-                return false;
-            }
-        }
-        return true;
+        // Set<Vertex> visitedVertices = traverse(false);
+        // if(visitedVertices.size() < connectedVertices.size()) {
+        //     return false;
+        // }
+        // return visitedVertices.containsAll(connectedVertices.keySet());
+
+        analyzeGraph();
+        return isConnected;
     }
 
 
