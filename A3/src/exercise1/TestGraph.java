@@ -11,8 +11,8 @@ public class TestGraph {
 
     @Before
     public void setup() { 
-        // sut = new MyUndirectedGraph();
-        sut = new MyDirectedGraph();
+        sut = new MyUndirectedGraph();
+        // sut = new MyDirectedGraph();
     }
 
     private void addElementsToGraph(int n) {
@@ -39,8 +39,10 @@ public class TestGraph {
         for(int i = 0; i < 4; i ++) {
             sut.addEdge(i, i + 1);
         }
-
         assertTrue(sut.isConnected());
+        
+        sut.addVertex(100);
+        assertFalse(sut.isConnected());
     }
 
     @Test
@@ -68,7 +70,7 @@ public class TestGraph {
         sut.addVertex(100);
         sut.addEdge(100, 1);
         
-        assertTrue(sut.isAcyclic());
         System.out.println(sut);
+        assertTrue(sut.isAcyclic());
     }
 }
