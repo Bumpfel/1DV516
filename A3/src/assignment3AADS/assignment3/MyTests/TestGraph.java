@@ -19,8 +19,8 @@ public class TestGraph {
 
     @Before
     public void setup() { 
-        sut = new MyUndirectedGraph<Integer>();
-        // sut = new MyDirectedGraph<Integer>();
+        // sut = new MyUndirectedGraph<Integer>();
+        sut = new MyDirectedGraph<Integer>();
     }
 
     private void addElementsToGraph(int n) {
@@ -31,7 +31,7 @@ public class TestGraph {
     }
 
     /**
-     * Linearly connects added vertices
+     * Linearly connects vertices
      */
     private void connectVertices() {
         for(int i = 0; i < sut.size() - 1; i ++) {
@@ -39,8 +39,18 @@ public class TestGraph {
         }
     }
 
+    /**
+     * Linearly connects vertices in specified range
+     */
+    private void connectVertices(int start, int end) {
+        for(int i = start; i < end; i ++) {
+            sut.addEdge(i, i + 1);
+        }
+    }
+
     @Test
-    public void testIsConnected() {
+    public void testIsConnectedUndirected() {
+        sut = new MyUndirectedGraph<>();
         addElementsToGraph(5);
 
         assertFalse(sut.isConnected());
@@ -49,6 +59,21 @@ public class TestGraph {
         assertTrue(sut.isConnected());
         
         sut.addVertex(100);
+        assertFalse(sut.isConnected());
+    }
+
+    @Test
+    public void testIsConnectedDirected() {
+        sut = new MyDirectedGraph<>();
+        addElementsToGraph(5);
+
+        assertFalse(sut.isConnected());
+        
+        connectVertices();
+        assertTrue(sut.isConnected());
+        
+        sut.addVertex(100);
+        sut.addEdge(100, 1);
         assertFalse(sut.isConnected());
     }
 
@@ -78,7 +103,9 @@ public class TestGraph {
     }
 
     @Test
-    public void testConnectedComponents() {
+    public void testConnectedComponentsUndirected() {
+        sut = new MyUndirectedGraph<>();
+
         List<List<Integer>> expected = new ArrayList<>();
         List<Integer> list1 = new ArrayList<>();
         expected.add(list1);
@@ -86,20 +113,61 @@ public class TestGraph {
         list2.add(5);
         expected.add(list2);
         
-        for(int i = 0; i < 4; i++) {
+        for(int i = 1; i < 5; i++) {
             sut.addVertex(i);
             list1.add(i);
         }
 
-        connectVertices();
-        sut.addVertex(4);
+        connectVertices(1, 4);
+        sut.addVertex(5);
 
-        // System.out.println(expected);
-        // System.out.println("-----");
-        // System.out.println(sut.connectedComponents());
+        List<List<Integer>> actual = sut.connectedComponents();
+        // assertEquals(expected, actual);
+        assertEquals(expected.size(), actual.size());
+        for(int i = 0; i < actual.size(); i ++) {
+            assertEquals(expected.get(i).size(), actual.get(i).size());
+            assertTrue(actual.get(i).containsAll(expected.get(i)));
+        }
+    }
+
+    @Test
+    public void testConnectedComponentsDirected() {
+        sut = new MyDirectedGraph<>();
+        
+        List<List<Integer>> expected = new ArrayList<>();
+        
+        List<Integer> list1 = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
+        List<Integer> list3 = new ArrayList<>();
+
+        expected.add(list1);
+        expected.add(list2);
+        expected.add(list3);
+
+        list2.add(4);
+        list3.add(5);
+        
+        for(int i = 1; i < 4; i++) {
+            sut.addVertex(i);
+            list1.add(i);
+        }
+        sut.addVertex(4);
+        sut.addVertex(5);
+
+        sut.addEdge(1, 3);
+        sut.addEdge(1, 4);
+        sut.addEdge(2, 1);
+        sut.addEdge(3, 2);
+        sut.addVertex(5);
 
         List<List<Integer>> actual = sut.connectedComponents();
 
-        assertEquals(expected, actual);
+        // assertEquals(expected, actual);
+        assertEquals(expected.size(), actual.size());
+        for(int i = 0; i < actual.size(); i ++) {
+            assertEquals(expected.get(i).size(), actual.get(i).size());
+            assertTrue(actual.get(i).containsAll(expected.get(i)));
+        }
     }
+
 }
