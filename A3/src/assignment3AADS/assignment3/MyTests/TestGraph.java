@@ -17,10 +17,10 @@ import assignment3AADS.assignment3.generic.MyUndirectedGraph;
 public class TestGraph {
     private AbstractGraph<Integer> sut;
 
+
     @Before
-    public void setup() { 
-        // sut = new MyUndirectedGraph<Integer>();
-        sut = new MyDirectedGraph<Integer>();
+    public void setup() {
+        sut = new MyUndirectedGraph<>(); // do not change type
     }
 
     private void addElementsToGraph(int n) {
@@ -49,8 +49,7 @@ public class TestGraph {
     }
 
     @Test
-    public void testIsConnectedUndirected() {
-        sut = new MyUndirectedGraph<>();
+    public void testIsConnected() {
         addElementsToGraph(5);
 
         assertFalse(sut.isConnected());
@@ -60,46 +59,88 @@ public class TestGraph {
         
         sut.addVertex(100);
         assertFalse(sut.isConnected());
-    }
 
-    @Test
-    public void testIsConnectedDirected() {
-        sut = new MyDirectedGraph<>();
-        addElementsToGraph(5);
-
-        assertFalse(sut.isConnected());
-        
-        connectVertices();
-        assertTrue(sut.isConnected());
-        
-        sut.addVertex(100);
         sut.addEdge(100, 1);
-        assertFalse(sut.isConnected());
+        if(sut instanceof MyUndirectedGraph) {
+            assertTrue(sut.isConnected());
+            sut = new MyDirectedGraph<>();
+            testIsConnected();
+        } else {
+            assertFalse(sut.isConnected());
+        }
     }
 
     @Test
-    public void testIsAcyclic() {
+    public void testIsAcyclic1() {
         addElementsToGraph(5);
-        
         connectVertices();
         assertTrue(sut.isAcyclic());
         
         sut.addEdge(4, 1);
-        // System.out.println(sut);
         assertFalse(sut.isAcyclic());
+
+        if(sut instanceof MyUndirectedGraph) {
+            sut = new MyDirectedGraph<>();
+            testIsAcyclic1();
+        }
     }
 
     @Test
     public void testIsAcyclic2() {
         addElementsToGraph(5);
-        
         connectVertices();
-        
         sut.addVertex(100);
         sut.addEdge(100, 1);
-        
-        // System.out.println(sut);
         assertTrue(sut.isAcyclic());
+
+        if(sut instanceof MyUndirectedGraph) {
+            sut = new MyDirectedGraph<>();
+            testIsAcyclic2();
+        }
+    }
+
+    @Test
+    public void testIsAcyclic3() {
+        for(int i = 1; i <= 5; i++) {
+            sut.addVertex(i);
+        }
+
+        sut.addEdge(1, 3);
+        sut.addEdge(1, 4);
+        sut.addEdge(2, 1);
+        sut.addEdge(3, 2);
+
+        System.out.println(sut);
+
+        assertFalse(sut.isAcyclic());
+
+        if(sut instanceof MyUndirectedGraph) {
+            sut = new MyDirectedGraph<>();
+            testIsAcyclic3();
+        }
+    }
+
+    @Test
+    public void testIsAcyclic4() {
+        for(int i = 1; i <= 5; i++) {
+            sut.addVertex(i);
+        }
+
+        sut.addEdge(1, 3);
+        sut.addEdge(1, 4);
+        sut.addEdge(2, 3);
+        sut.addEdge(3, 2);
+
+        System.out.println(sut);
+
+        
+        if(sut instanceof MyUndirectedGraph) {
+            assertFalse(sut.isAcyclic());
+            sut = new MyDirectedGraph<>();
+            testIsAcyclic4();
+        } else {
+            assertTrue(sut.isAcyclic());
+        }
     }
 
     @Test
@@ -122,7 +163,6 @@ public class TestGraph {
         sut.addVertex(5);
 
         List<List<Integer>> actual = sut.connectedComponents();
-        // assertEquals(expected, actual);
         assertEquals(expected.size(), actual.size());
         for(int i = 0; i < actual.size(); i ++) {
             assertEquals(expected.get(i).size(), actual.get(i).size());
@@ -162,7 +202,6 @@ public class TestGraph {
 
         List<List<Integer>> actual = sut.connectedComponents();
 
-        // assertEquals(expected, actual);
         assertEquals(expected.size(), actual.size());
         for(int i = 0; i < actual.size(); i ++) {
             assertEquals(expected.get(i).size(), actual.get(i).size());
