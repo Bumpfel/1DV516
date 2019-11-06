@@ -6,16 +6,9 @@
   "configurations": [
     {
       "type": "java",
-      "name": "CodeLens (Launch) - TestUndirectedGraph",
+      "name": "CodeLens (Launch) - MyUndirectedGraph",
       "request": "launch",
-      "mainClass": "assignment3AADS.assignment3.generic.tests.TestUndirectedGraph",
-      "projectName": "A3"
-    },
-    {
-      "type": "java",
-      "name": "CodeLens (Launch) - Graph",
-      "request": "launch",
-      "mainClass": "exercise1.Graph",
+      "mainClass": "assignment3AADS.assignment3.generic.MyUndirectedGraph",
       "projectName": "A3",
       "console": "internalConsole"
     },
@@ -26,13 +19,5 @@
       "mainClass": "${file}",
       "console": "internalConsole"
     },
-    {
-      "type": "java",
-      "name": "Debug (Launch)-App<A3>",
-      "request": "launch",
-      "mainClass": "app.App",
-      "projectName": "A3",
-      "console": "internalConsole"
-    }
   ]
 }

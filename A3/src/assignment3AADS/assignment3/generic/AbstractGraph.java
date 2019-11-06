@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractGraph<T> implements A3Graph<T> {
-    private HashMap<T, List<T>> adjacentVertices = new HashMap<>();
+    protected HashMap<T, List<T>> adjacentVertices = new HashMap<>();
     private boolean isAcyclic = true;
     private boolean isConnected;
     private List<List<T>> connectedComponents = new ArrayList<>();

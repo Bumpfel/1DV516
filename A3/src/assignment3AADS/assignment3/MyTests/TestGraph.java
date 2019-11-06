@@ -209,4 +209,63 @@ public class TestGraph {
         }
     }
 
+    @Test
+    public void testhasEulerPath() {
+        // Euler graph from example in assignment
+        sut = buildValidEulerGraph();
+        assertTrue(sut.hasEulerPath());
+
+        // Same graph but without vertex 5 and connected edges (not an euler path)
+        sut = buildInvalidEulerGraph();
+        assertFalse(sut.hasEulerPath());
+    }
+
+
+    @Test
+    public void testEulerPath() {
+        sut = buildValidEulerGraph();
+
+        List<Integer> path = sut.eulerPath();
+        // TODO finns för många kombinationer för att jämföra med ett förväntat resultat.
+        // försök köra en traversal och kolla så att alla edges har blivit traverserade en gång
+    }
+
+    private MyUndirectedGraph<Integer> buildValidEulerGraph() {
+        MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
+
+        for(int i = 1; i <= 5; i ++) {
+            graph.addVertex(i);
+        }
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(1, 5);
+        
+        graph.addEdge(3, 2);
+        graph.addEdge(3, 4);
+        graph.addEdge(3, 5);
+        
+        graph.addEdge(2, 4);
+
+        return graph;
+    }
+
+    private MyUndirectedGraph<Integer> buildInvalidEulerGraph() {
+        MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
+
+        for(int i = 1; i <= 4; i ++) {
+            graph.addVertex(i);
+        }
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        
+        graph.addEdge(3, 2);
+        graph.addEdge(3, 4);
+        
+        graph.addEdge(2, 4);
+
+        return graph;
+    }
+
 }
