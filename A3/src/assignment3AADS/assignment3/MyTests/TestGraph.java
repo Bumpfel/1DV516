@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -210,7 +212,7 @@ public class TestGraph {
     }
 
     @Test
-    public void testhasEulerPath() {
+    public void testHasEulerPath() {
         // Euler graph from example in assignment
         sut = buildValidEulerGraph();
         assertTrue(sut.hasEulerPath());
@@ -222,12 +224,61 @@ public class TestGraph {
 
 
     @Test
-    public void testEulerPath() {
+    public void testEulerPaths() { // TODO mappa alla edges i grafen och i eulerPath och jämför
         sut = buildValidEulerGraph();
 
-        List<Integer> path = sut.eulerPath();
-        // TODO finns för många kombinationer för att jämföra med ett förväntat resultat.
-        // försök köra en traversal och kolla så att alla edges har blivit traverserade en gång
+        List<List<Integer>> graphEdges = mapEdges();
+        List<List<Integer>> eulerEdges = mapEdgesEulerPath(sut.eulerPath());
+        System.out.println(graphEdges);
+        System.out.println(eulerEdges);
+        testEulerPath();
+        assertTrue(eulerEdges.containsAll(graphEdges));
+        
+        // sut = buildValidEulerGraph2();
+        // sut.eulerPath();
+        // testEulerPath();
+    }
+
+    private void testEulerPath() {
+        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices();
+        
+        // check that no edges remains (not the best test)
+        for(List<Integer> edges : adjacentVertices.values()) {
+            assertTrue(edges.isEmpty());
+        }
+    }
+
+    private List<List<Integer>> mapEdges() {
+        List<List<Integer>> allEdges = new ArrayList<>();
+        HashSet<Integer> addedVertices = new HashSet<>();
+
+        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices(); 
+        for(Integer vertex : adjacentVertices.keySet()) {
+            for(Integer adjacentVertex : adjacentVertices.get(vertex)) {
+                addedVertices.add(vertex);
+                if(addedVertices.contains(adjacentVertex)) { // skip duplicates
+                    continue;
+                }
+                List<Integer> edge = new ArrayList<>();
+                edge.add(vertex);
+                edge.add(adjacentVertex);
+                allEdges.add(edge); // TODO notera - lägger till dubletter
+            }
+        }
+        return allEdges;
+    }
+
+
+    private List<List<Integer>> mapEdgesEulerPath(List<Integer> path) {
+        List<List<Integer>> allEdges = new ArrayList<>();
+
+        for(int i = 0; i < path.size() - 1; i ++) {
+            List<Integer> edge = new ArrayList<>();
+            edge.add(path.get(i));
+            edge.add(path.get(i + 1));
+            allEdges.add(edge);
+        }
+        return allEdges;
     }
 
     private MyUndirectedGraph<Integer> buildValidEulerGraph() {
@@ -266,6 +317,55 @@ public class TestGraph {
         graph.addEdge(2, 4);
 
         return graph;
+    }
+
+
+    private static MyUndirectedGraph<Integer> buildValidEulerGraph2() {       
+        MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
+        for(int i = 1; i <= 7; i ++) {
+            graph.addVertex(i);
+        }
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 6);
+
+        graph.addEdge(2, 3);
+        graph.addEdge(2, 4);
+        graph.addEdge(2, 6);
+        
+        graph.addEdge(3, 4);
+      
+        graph.addEdge(4, 5);
+        graph.addEdge(4, 7);
+
+        graph.addEdge(5, 7);
+
+        graph.addEdge(6, 7);
+
+        return graph;
+    }
+
+
+    class Edge {
+        Integer from;
+        Integer to;
+        boolean visited = false;
+
+        Edge(Integer _from, Integer _to) {
+            from = _from;
+            to = _to;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            try {
+                // @SuppressWarnings("unchecked")
+                Edge other = (Edge) o;
+                return (from.equals(other.from) && to.equals(other.to)) || (from.equals(other.to) && to.equals(other.from));
+            }
+            catch(ClassCastException e) {
+                return false;
+            }
+        }
     }
 
 }

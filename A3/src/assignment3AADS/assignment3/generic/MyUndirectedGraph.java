@@ -2,7 +2,9 @@ package assignment3AADS.assignment3.generic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,35 +13,29 @@ import java.util.Stack;
 import assignment3AADS.assignment3.generic.MyUndirectedGraph;
 
 public class MyUndirectedGraph<T> extends AbstractGraph<T> {
-    // private Map<Vertex, List<T>> adjacentVertices = new HashMap<>();
 
     public static void main(String[] args) {
-        MyUndirectedGraph<Integer> graph = buildExerciseGraph();
-        
+        // MyUndirectedGraph<Integer> graph = buildExerciseGraph();
+        MyUndirectedGraph<Integer> graph = buildMyGraph();
+
+        // System.out.println(graph);
         graph.eulerPath();
     }
 
-    // @Override
-    // public void addVertex(T label) {
-    //     adjacentVertices.put(new Vertex(label), new ArrayList<>());
-    // }
+    private void removeEdge(T vertex1, T vertex2) {
+        adjacentVertices.get(vertex1).remove(vertex2);
+        adjacentVertices.get(vertex2).remove(vertex1);
+        // System.out.println("removing edges between " + vertex1 + " and " + vertex2);
+        // System.out.println(this);
+    }
 
-    // @Override
-    // public void addEdge(T sourceVertex, T targetVertex) {
-    //     List<T> sourceVertexEdges = adjacentVertices.get(sourceVertex);
-    //     List<T> targetVertexEdges = adjacentVertices.get(targetVertex);
-
-    //     if(sourceVertexEdges == null || targetVertexEdges == null) {
-    //         throw new IllegalArgumentException("Cannot add edge " + sourceVertex + " - " + targetVertex + ". Vertex or vertices does not exist");
-    //     }
-        
-    //     sourceVertexEdges.add(targetVertex);
-    //     if(this instanceof MyUndirectedGraph) {
-    //         targetVertexEdges.add(sourceVertex);
+    // private void removeEdges(List<T> path) {
+    //     for(T edges : path) {
+    //         for(int i = 0; i < 2 - 1; i++) {
+    //             removeEdge(edges.get(0), edges.get(1));
+    //         }
     //     }
     // }
-
-
 
 
     @Override
@@ -60,44 +56,78 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
     @Override
     public List<T> eulerPath() {
         if(hasEulerPath()) {
-
-            // while(true) {
-                T root = (T) adjacentVertices.keySet().toArray()[0];
-                LinkedHashSet<T> path = depthFirstTraversal(root);
-                System.out.println(path);
-                for(T vertex : path) {
-                    // graph.addEdge
+            HashMap<T, List<T>> adjacentVerticesCopy = new HashMap<>(adjacentVertices);
+            // get vertex with uneven degree to start on 
+            T startVertex = null;
+            for(T vertex : adjacentVertices.keySet()) {
+                if(adjacentVertices.get(vertex).size() % 2 == 1) {
+                    startVertex = vertex;
                 }
-            // }
-            return null; // TODO real path
+            }
+            
+            List<T> path = depthFirstTraversalIterative(startVertex);
+            // removeEdges(path);
+
+            int firstPathsize = path.size();
+            System.out.println("first path " + path);
+            for(int i = 0; i < firstPathsize ; i ++) {
+                T vertex = path.get(i);
+                if(adjacentVertices.get(vertex).size() > 0) { // has untraversed paths
+                    System.out.println(vertex + " has untraversed paths " + adjacentVertices.get(vertex));
+                    List<T> path2 = depthFirstTraversalIterative(vertex);
+                    // removeEdges(path2);
+                    path.remove(vertex);
+                    path.addAll(path2);
+                    System.out.println(path2);
+                }
+            }
+            System.out.println("final path " + path);
+            
+            adjacentVertices = adjacentVerticesCopy; // restore original
+            return path;
         }
         return null;
     }
 
-    private LinkedHashSet<T> depthFirstTraversal(T root) {
-        LinkedHashSet<T> visited = new LinkedHashSet<T>();
-        Stack<T> stack = new Stack<T>();
-        stack.push(root);
-        while (!stack.isEmpty()) {
-            T vertex = stack.pop();
-            if (!visited.contains(vertex)) {
-                visited.add(vertex);
-                for (T adjacentVertex : adjacentVertices.get(vertex)) {
-                    stack.push(adjacentVertex);
-                }
+    private List<T> depthFirstTraversalIterative(T root) {
+        List<T> visited = new LinkedList<>();
+        Stack<T> visitedEdges = new Stack<>();
+        Stack<T> visitNext = new Stack<>();
+        visitNext.push(root);
+        while (!visitNext.isEmpty()) {
+            if(!visitedEdges.empty()) {
+                removeEdge(visitedEdges.pop(), visitedEdges.pop());
+            }
+            T vertex = visitNext.pop();
+            visited.add(vertex);
+            if(adjacentVertices.get(vertex).isEmpty()) {
+                break;
+            }
+            for (T adjacentVertex : adjacentVertices.get(vertex)) {
+                // if (!visited.contains(vertex) && !visited.contains(adjacentVertex)) {
+                    // List<T> list = new ArrayList<>();
+                    // list.add(vertex);
+                    // list.add(adjacentVertex);
+                    visitNext.push(adjacentVertex);
+                    // removeEdge(vertex, adjacentVertex);
+                    visitedEdges.push(vertex);
+                    visitedEdges.push(adjacentVertex);
+                // }
             }
         }
         return visited;
     }
 
-    private void dfs(Vertex v) {
-        v.visited = true;
-        for(T adjacentVertex : adjacentVertices.get(v.element)) {
-            if(!new Vertex(adjacentVertex).visited) {
-                dfs(new Vertex(adjacentVertex));
-            }
-        }
-    }
+    // List<T> visitedDFS = new LinkedList<>();
+
+    // private void dfs(T vertex) {
+    //     visitedDFS.add(vertex);
+    //     for(T adjacentVertex : adjacentVertices.get(vertex)) {
+    //         if(!visitedDFS.contains(adjacentVertex)) {
+    //             dfs(adjacentVertex);
+    //         }
+    //     }
+    // }
 
 
 
@@ -120,48 +150,30 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
         return graph;
     }
 
-    class Vertex {
-        T element;
-        boolean visited;
-
-        Vertex(T _element) {
-            element = _element;
+    private static MyUndirectedGraph<Integer> buildMyGraph() {       
+        MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
+        for(int i = 1; i <= 7; i ++) {
+            graph.addVertex(i);
         }
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 6);
 
-        @Override
-        public boolean equals(Object o) {
-            try {
-                @SuppressWarnings("unchecked")
-                Vertex other = (Vertex) o;
-                return element.equals(other.element);
-            }
-            catch(ClassCastException e) {
-                return false;
-            }
-        }
+        graph.addEdge(2, 3);
+        graph.addEdge(2, 4);
+        graph.addEdge(2, 6);
+        
+        graph.addEdge(3, 4);
+      
+        graph.addEdge(4, 5);
+        graph.addEdge(4, 7);
+
+        graph.addEdge(5, 7);
+
+        graph.addEdge(6, 7);
+
+        return graph;
     }
 
-    class Edge {
-        T from;
-        T to;
-        boolean visited = false;
 
-        Edge(T _from, T _to) {
-            from = _from;
-            to = _to;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            try {
-                @SuppressWarnings("unchecked")
-                Edge other = (Edge) o;
-                return (from.equals(other.from) && to.equals(other.to)) || (from.equals(other.to) && to.equals(other.from));
-            }
-            catch(ClassCastException e) {
-                return false;
-            }
-        }
-    }
 
 }

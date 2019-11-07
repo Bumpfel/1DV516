@@ -14,6 +14,10 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
 
     public int size() { return adjacentVertices.size(); }
 
+    public HashMap<T, List<T>> getAdjacentVertices() { // for testing
+        return new HashMap<>(adjacentVertices);
+    }
+
     public void addVertex(T vertex) {
         adjacentVertices.putIfAbsent(vertex, new ArrayList<>());
     }
@@ -21,6 +25,11 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
     public void addEdge(T sourceVertex, T targetVertex) {
         List<T> sourceVertexEdges = adjacentVertices.get(sourceVertex);
         List<T> targetVertexEdges = adjacentVertices.get(targetVertex);
+
+        if(sourceVertexEdges.contains(targetVertex) || targetVertexEdges.contains(sourceVertex)) {
+            System.out.println("Rejecting duplicate edge " + sourceVertex + " - " + targetVertex);
+            return;
+        }
 
         if(sourceVertexEdges == null || targetVertexEdges == null) {
             throw new IllegalArgumentException("Cannot add edge " + sourceVertex + " - " + targetVertex + ". Vertex or vertices does not exist");
@@ -32,7 +41,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
         }
     }
 
-    private Set<T> recursiveTraversal(T vertex, Set<T> visitedVertices, List<T> stronglyConnectedVertices, T parent) {
+    private Set<T> depthFirstTraversal(T vertex, Set<T> visitedVertices, List<T> stronglyConnectedVertices, T parent) {
         visitedVertices.add(vertex); // add current vertex to visited
 
         // build connectedComponents lists. create and add new list if this call was not recursive,
@@ -49,7 +58,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
                 if(visitedVertices.contains(adjacentVertex)) { // vertex was already visited and not a parent. it's a cyclic graph
                     isAcyclic = false;
                 } else {
-                    recursiveTraversal(adjacentVertex, visitedVertices, stronglyConnectedVertices, vertex); // go to next vertex
+                    depthFirstTraversal(adjacentVertex, visitedVertices, stronglyConnectedVertices, vertex); // go to next vertex
                 }
             }
         }
@@ -66,7 +75,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
             if(allVisited.contains(vertex)) { // skip vertices that were already visited during this analysis
                 continue;
             }
-            visited = recursiveTraversal(vertex, new HashSet<>(), null, null);
+            visited = depthFirstTraversal(vertex, new HashSet<>(), null, null);
             allVisited.addAll(visited);
         }
     }
