@@ -1,32 +1,58 @@
 package assignment3AADS.assignment3.generic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import assignment3AADS.assignment3.generic.MyUndirectedGraph;
 
 public class MyUndirectedGraph<T> extends AbstractGraph<T> {
+    private Stack<Edge> removedEdges = new Stack<>();
 
     public static void main(String[] args) {
         // MyUndirectedGraph<Integer> graph = buildExerciseGraph();
         // MyUndirectedGraph<Integer> graph = buildMyGraph();
         MyUndirectedGraph<Integer> graph = buildComplexGraph();
 
-        System.out.println(graph.eulerPath());
+        System.out.println(graph);
+        graph.eulerPath();
+        
+        System.out.println(graph);
+        graph.eulerPath();
+    }
+
+    public void addVertex(T vertex) {
+        adjacentVertices.putIfAbsent(vertex, new ArrayList<>());
+    }
+
+    public void addEdge(T sourceVertex, T targetVertex) {
+        List<T> sourceVertexEdges = adjacentVertices.get(sourceVertex);
+        List<T> targetVertexEdges = adjacentVertices.get(targetVertex);
+
+        if(sourceVertexEdges.contains(targetVertex) || targetVertexEdges.contains(sourceVertex)) {
+            System.out.println("Rejecting duplicate edge " + sourceVertex + " - " + targetVertex);
+            return;
+        }
+
+        if(sourceVertexEdges == null || targetVertexEdges == null) {
+            throw new IllegalArgumentException("Cannot add edge " + sourceVertex + " - " + targetVertex + ". Vertex or vertices does not exist");
+        }
+        
+        sourceVertexEdges.add(targetVertex);
+        if(this instanceof MyUndirectedGraph) {
+            targetVertexEdges.add(sourceVertex);
+        }
     }
 
     private void removeEdge(T vertex1, T vertex2) {
         adjacentVertices.get(vertex1).remove(vertex2);
         adjacentVertices.get(vertex2).remove(vertex1);
-        // System.out.println("removing edges between " + vertex1 + " and " + vertex2);
-        // System.out.println(this);
+    }
+
+    private void removeEdge(Edge edge) {
+        adjacentVertices.get(edge.from).remove(edge.to);
+        adjacentVertices.get(edge.to).remove(edge.from);
     }
 
     @Override
@@ -56,7 +82,6 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
     @Override
     public List<T> eulerPath() {
         if(hasEulerPath()) {
-            HashMap<T, List<T>> adjacentVerticesCopy = new HashMap<>(adjacentVertices);
             // get start vertex (any for circuit, vertex with uneven degree for path)
             T startVertex = adjacentVertices.keySet().iterator().next();
             for(T vertex : adjacentVertices.keySet()) {
@@ -65,40 +90,41 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
                 }
             }
             
-            List<T> path = depthFirstTraversal(startVertex);
-            // removeEdges(path);
+            List<T> path = eulerTraversal(startVertex);
 
-            int firstPathsize = path.size();
-            System.out.println("first path " + path);
-            for(int i = 0; i < firstPathsize ; i ++) {
+            // System.out.println("first path " + path);
+            for(int i = 1; i < path.size() ; i ++) {
                 T vertex = path.get(i);
+                // System.out.println("checking for untravelled edges at index " + i + " (" + vertex + ")");
                 if(adjacentVertices.get(vertex).size() > 0) { // has untraversed paths
-                    System.out.println(vertex + " has untraversed paths " + adjacentVertices.get(vertex));
-                    List<T> path2 = depthFirstTraversal(vertex);
-                    // removeEdges(path2);
+                    // System.out.println(vertex + " has untraversed paths " + adjacentVertices.get(vertex));
+                    List<T> path2 = eulerTraversal(vertex);
                     path.remove(vertex);
                     path.addAll(i, path2);
-                    System.out.println(path2);
-                    System.out.println("inserting new path at index " + i);
+                    // System.out.println("inserting new path " + path2 + " at index " + i);
+                    // System.out.println("new path " + path);
                 }
             }
-            System.out.println("final path " + path);
-            
-            adjacentVertices = adjacentVerticesCopy; // restore original
+            // System.out.println("final path " + path);
+            // System.out.println();
+
+            restoreGraph();
             return path;
         }
         return null;
     }
 
-    private List<T> depthFirstTraversal(T root) {
+    private List<T> eulerTraversal(T root) {
         List<T> visited = new LinkedList<>();
-        Stack<T> visitedEdges = new Stack<>();
+        Stack<Edge> visitedEdges = new Stack<>();
         Stack<T> visitNext = new Stack<>();
 
         visitNext.push(root);
         while (!visitNext.isEmpty()) {
             if(!visitedEdges.empty()) {
-                removeEdge(visitedEdges.pop(), visitedEdges.pop());
+                Edge edge = visitedEdges.pop();
+                removeEdge(edge);
+                removedEdges.push(edge);
             }
             T vertex = visitNext.pop();
             visited.add(vertex);
@@ -107,12 +133,49 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
             }
             for (T adjacentVertex : adjacentVertices.get(vertex)) {
                 visitNext.push(adjacentVertex);
-                visitedEdges.push(vertex);
-                visitedEdges.push(adjacentVertex);
+                visitedEdges.push(new Edge(vertex, adjacentVertex));
             }
         }
         return visited;
     }
+
+    private void restoreGraph() {
+        for(Edge edge : removedEdges) {
+            addEdge(edge.from, edge.to);
+        }
+        removedEdges.clear();
+    }
+    
+    
+
+    class Edge {
+        T from;
+        T to;
+    
+        Edge(T _from, T _to) {
+            from = _from;
+            to = _to;
+        }
+    
+        @Override
+        public String toString() {
+            return from + "-" + to;
+        }
+    
+        @Override
+        public boolean equals(Object o) {
+            try {
+                @SuppressWarnings("unchecked")
+                Edge other = (Edge) o;
+                return (from.equals(other.from) && to.equals(other.to)) || (from.equals(other.to) && to.equals(other.from));
+            }
+            catch(ClassCastException e) {
+                return false;
+            }
+        }
+    }
+    
+
 
 
     private static MyUndirectedGraph<Integer> buildExerciseGraph() {

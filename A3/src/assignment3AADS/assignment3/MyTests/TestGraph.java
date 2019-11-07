@@ -225,17 +225,19 @@ public class TestGraph {
         sut = buildValidEulerGraph();
         List<Edge> graphEdges = mapAllEdges();
         List<Edge> eulerEdges = mapEdgesEulerPath();
-        assertTrue(eulerEdges.containsAll(graphEdges));
+        assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
         
         // add a random edge to assert it has not been travelled
         graphEdges.add(new Edge(5, 4));
         assertFalse(eulerEdges.containsAll(graphEdges));
         
-        // test complex graph from book
-        sut = buildValidComplexEulerGraph();
-        graphEdges = mapAllEdges();
-        eulerEdges = mapEdgesEulerPath();
-        assertTrue(eulerEdges.containsAll(graphEdges));
+        // test morecomplex graph from book
+        for(int i = 0; i < 10000; i ++) {
+            sut = buildValidComplexEulerGraph();
+            graphEdges = mapAllEdges();
+            eulerEdges = mapEdgesEulerPath();
+            assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
+        }
     }
 
 
@@ -307,18 +309,19 @@ public class TestGraph {
 
 
     // scrambled order
-    private static MyUndirectedGraph<Integer> buildValidComplexEulerGraph() {       
+    private static MyUndirectedGraph<Integer> buildValidComplexEulerGraph() {
         MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
-        graph.addVertex(10);
-        for(int i = 1; i <= 6; i ++) {
-            graph.addVertex(i);
+
+        ArrayList<Integer> vertices = new ArrayList<>();
+
+        for(int i = 1; i <= 12; i ++) {
+            vertices.add(i);
         }
-        graph.addVertex(11);
-        graph.addVertex(7);
-        graph.addVertex(12);
-        graph.addVertex(8);
-        graph.addVertex(9);
-        
+        Collections.shuffle(vertices);
+
+        for(Integer vertex : vertices) {
+            graph.addVertex(vertex);
+        }
 
         ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge(1, 3));
@@ -353,7 +356,6 @@ public class TestGraph {
         edges.add(new Edge(10, 12));
 
         Collections.shuffle(edges);
-        System.out.println("edges " + edges);
 
         for(Edge edge : edges) {
             graph.addEdge(edge.from, edge.to);
@@ -365,7 +367,6 @@ public class TestGraph {
 class Edge {
         Integer from;
         Integer to;
-        boolean visited = false;
 
         Edge(Integer _from, Integer _to) {
             from = _from;
@@ -380,7 +381,6 @@ class Edge {
         @Override
         public boolean equals(Object o) {
             try {
-                // @SuppressWarnings("unchecked")
                 Edge other = (Edge) o;
                 return (from.equals(other.from) && to.equals(other.to)) || (from.equals(other.to) && to.equals(other.from));
             }

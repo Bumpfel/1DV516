@@ -6,6 +6,21 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - Test",
+      "request": "launch",
+      "mainClass": "Test",
+      "projectName": "A3"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - AbstractGraph",
+      "request": "launch",
+      "mainClass": "assignment3AADS.assignment3.generic.AbstractGraph",
+      "projectName": "A3",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - MyUndirectedGraph",
       "request": "launch",
       "mainClass": "assignment3AADS.assignment3.generic.MyUndirectedGraph",
@@ -18,6 +33,6 @@
       "request": "launch",
       "mainClass": "${file}",
       "console": "internalConsole"
-    },
+    }
   ]
 }

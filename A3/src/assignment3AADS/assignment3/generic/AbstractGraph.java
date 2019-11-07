@@ -15,7 +15,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
     public int size() { return adjacentVertices.size(); }
 
     public HashMap<T, List<T>> getAdjacentVertices() { // for testing
-        return new HashMap<>(adjacentVertices);
+        return adjacentVertices;
     }
 
     public void addVertex(T vertex) {
@@ -91,7 +91,6 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
         return isConnected;
     }
 
-
     public List<List<T>> connectedComponents() {
         analyzeGraph();
         return connectedComponents; // this list is not used anywhere else in the class, so not bothering with returning a copy
@@ -101,5 +100,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
     public String toString() {
         return adjacentVertices.toString();
     }
-    
+
+
+
 }
