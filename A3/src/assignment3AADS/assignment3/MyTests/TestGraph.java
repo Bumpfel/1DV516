@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,30 +216,34 @@ public class TestGraph {
     }
 
 
+    /** 
+     * Maps all available edges in the graph, and all the edges travelled by eulerPath(), and compares the two
+    */
     @Test
-    public void testEulerPaths() {
+    public void testEulerPaths() { 
+        // test assignment example graph
         sut = buildValidEulerGraph();
-
-        List<Edge> graphEdges = mapEdges();
-        List<Edge> eulerEdges = mapEdgesEulerPath(sut.eulerPath());
+        List<Edge> graphEdges = mapAllEdges();
+        List<Edge> eulerEdges = mapEdgesEulerPath();
         assertTrue(eulerEdges.containsAll(graphEdges));
         
+        // add a random edge to assert it has not been travelled
         graphEdges.add(new Edge(5, 4));
         assertFalse(eulerEdges.containsAll(graphEdges));
         
-        sut = buildValidEulerGraph2();
-        
-        graphEdges = mapEdges();
-        eulerEdges = mapEdgesEulerPath(sut.eulerPath());
+        // test complex graph from book
+        sut = buildValidComplexEulerGraph();
+        graphEdges = mapAllEdges();
+        eulerEdges = mapEdgesEulerPath();
         assertTrue(eulerEdges.containsAll(graphEdges));
     }
 
 
-    private List<Edge> mapEdges() {
+    private List<Edge> mapAllEdges() {
         List<Edge> allEdges = new ArrayList<>();
         HashSet<Integer> addedVertices = new HashSet<>();
 
-        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices(); 
+        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices();
         for(Integer vertex : adjacentVertices.keySet()) {
             for(Integer adjacentVertex : adjacentVertices.get(vertex)) {
                 addedVertices.add(vertex);
@@ -252,7 +257,8 @@ public class TestGraph {
     }
 
 
-    private List<Edge> mapEdgesEulerPath(List<Integer> path) {
+    private List<Edge> mapEdgesEulerPath() {
+        List<Integer> path = sut.eulerPath();
         List<Edge> allEdges = new ArrayList<>();
 
         for(int i = 0; i < path.size() - 1; i ++) {
@@ -300,32 +306,63 @@ public class TestGraph {
     }
 
 
-    private static MyUndirectedGraph<Integer> buildValidEulerGraph2() {       
+    // scrambled order
+    private static MyUndirectedGraph<Integer> buildValidComplexEulerGraph() {       
         MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
-        for(int i = 1; i <= 7; i ++) {
+        graph.addVertex(10);
+        for(int i = 1; i <= 6; i ++) {
             graph.addVertex(i);
         }
-        graph.addEdge(1, 2);
-        graph.addEdge(1, 6);
-
-        graph.addEdge(2, 3);
-        graph.addEdge(2, 4);
-        graph.addEdge(2, 6);
+        graph.addVertex(11);
+        graph.addVertex(7);
+        graph.addVertex(12);
+        graph.addVertex(8);
+        graph.addVertex(9);
         
-        graph.addEdge(3, 4);
-      
-        graph.addEdge(4, 5);
-        graph.addEdge(4, 7);
 
-        graph.addEdge(5, 7);
+        ArrayList<Edge> edges = new ArrayList<>();
+        edges.add(new Edge(1, 3));
+        edges.add(new Edge(1, 4));
 
-        graph.addEdge(6, 7);
+        edges.add(new Edge(2, 3));
+        edges.add(new Edge(2, 8));
+        
+        edges.add(new Edge(3, 4));
+        edges.add(new Edge(3, 6));
+        edges.add(new Edge(3, 7));
+        edges.add(new Edge(3, 9));
+        
+        edges.add(new Edge(4, 5));
+        edges.add(new Edge(4, 7));
+        edges.add(new Edge(4, 10));
+        edges.add(new Edge(4, 11));
 
+        edges.add(new Edge(5, 10));
+
+        edges.add(new Edge(6, 9));
+        
+        edges.add(new Edge(7, 9));
+        edges.add(new Edge(7, 10));
+        
+        edges.add(new Edge(8, 9));
+
+        edges.add(new Edge(9, 10));
+        edges.add(new Edge(9, 12));
+
+        edges.add(new Edge(10, 11));
+        edges.add(new Edge(10, 12));
+
+        Collections.shuffle(edges);
+        System.out.println("edges " + edges);
+
+        for(Edge edge : edges) {
+            graph.addEdge(edge.from, edge.to);
+        }
         return graph;
     }
+}
 
-
-    class Edge {
+class Edge {
         Integer from;
         Integer to;
         boolean visited = false;
@@ -353,4 +390,3 @@ public class TestGraph {
         }
     }
 
-}
