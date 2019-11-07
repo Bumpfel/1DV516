@@ -6,10 +6,19 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - MySocialNetwork",
+      "request": "launch",
+      "mainClass": "assignment3AADS.assignment3.generic.MySocialNetwork",
+      "projectName": "A3",
+      "console": "internalConsole"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - Test",
       "request": "launch",
       "mainClass": "Test",
-      "projectName": "A3"
+      "projectName": "A3",
+      "console": "internalConsole"
     },
     {
       "type": "java",

@@ -91,7 +91,7 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
             }
             
             List<T> path = eulerTraversal(startVertex);
-
+            // TODO delete prints
             // System.out.println("first path " + path);
             for(int i = 1; i < path.size() ; i ++) {
                 T vertex = path.get(i);
