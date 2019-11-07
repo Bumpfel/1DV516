@@ -131,7 +131,7 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
 
 
 
-    private static MyUndirectedGraph<Integer> buildExerciseGraph() {       
+    private static MyUndirectedGraph<Integer> buildExerciseGraph() {
         MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
         for(int i = 1; i <= 5; i ++) {
             graph.addVertex(i);

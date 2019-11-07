@@ -19,7 +19,6 @@ import assignment3AADS.assignment3.generic.MyUndirectedGraph;
 public class TestGraph {
     private AbstractGraph<Integer> sut;
 
-
     @Before
     public void setup() {
         sut = new MyUndirectedGraph<>(); // do not change type
@@ -72,37 +71,57 @@ public class TestGraph {
         }
     }
 
+
     @Test
-    public void testIsAcyclic1() {
+    public void testIsAcyclicUndirected1() {
+        sut = new MyUndirectedGraph<>();
+        acyclicTest1();
+    }
+    @Test
+    public void testIsAcyclicDirected1() {
+        sut = new MyDirectedGraph<>();
+        acyclicTest1();
+    }
+    private void acyclicTest1() {
         addElementsToGraph(5);
         connectVertices();
         assertTrue(sut.isAcyclic());
         
         sut.addEdge(4, 1);
         assertFalse(sut.isAcyclic());
-
-        if(sut instanceof MyUndirectedGraph) {
-            sut = new MyDirectedGraph<>();
-            testIsAcyclic1();
-        }
     }
 
+
     @Test
-    public void testIsAcyclic2() {
+    public void testIsAcyclicUndirected2() {
+        sut = new MyUndirectedGraph<>();
+        acyclicTest2();
+    }
+    @Test
+    public void testIsAcyclicDirected2() {
+        sut = new MyDirectedGraph<>();
+        acyclicTest2();
+    }
+    private void acyclicTest2() {
         addElementsToGraph(5);
         connectVertices();
         sut.addVertex(100);
         sut.addEdge(100, 1);
         assertTrue(sut.isAcyclic());
-
-        if(sut instanceof MyUndirectedGraph) {
-            sut = new MyDirectedGraph<>();
-            testIsAcyclic2();
-        }
     }
 
+
     @Test
-    public void testIsAcyclic3() {
+    public void testIsAcyclicUndirected3() {
+        sut = new MyUndirectedGraph<>();
+        acyclicTest3();
+    }
+    @Test
+    public void testIsAcyclicDirected3() {
+        sut = new MyDirectedGraph<>();
+        acyclicTest3();
+    }
+    private void acyclicTest3() {
         for(int i = 1; i <= 5; i++) {
             sut.addVertex(i);
         }
@@ -112,38 +131,9 @@ public class TestGraph {
         sut.addEdge(2, 1);
         sut.addEdge(3, 2);
 
-        System.out.println(sut);
-
         assertFalse(sut.isAcyclic());
-
-        if(sut instanceof MyUndirectedGraph) {
-            sut = new MyDirectedGraph<>();
-            testIsAcyclic3();
-        }
     }
 
-    @Test
-    public void testIsAcyclic4() {
-        for(int i = 1; i <= 5; i++) {
-            sut.addVertex(i);
-        }
-
-        sut.addEdge(1, 3);
-        sut.addEdge(1, 4);
-        sut.addEdge(2, 3);
-        sut.addEdge(3, 2);
-
-        System.out.println(sut);
-
-        
-        if(sut instanceof MyUndirectedGraph) {
-            assertFalse(sut.isAcyclic());
-            sut = new MyDirectedGraph<>();
-            testIsAcyclic4();
-        } else {
-            assertTrue(sut.isAcyclic());
-        }
-    }
 
     @Test
     public void testConnectedComponentsUndirected() {
@@ -171,6 +161,7 @@ public class TestGraph {
             assertTrue(actual.get(i).containsAll(expected.get(i)));
         }
     }
+
 
     @Test
     public void testConnectedComponentsDirected() {
@@ -211,6 +202,7 @@ public class TestGraph {
         }
     }
 
+
     @Test
     public void testHasEulerPath() {
         // Euler graph from example in assignment
@@ -224,32 +216,26 @@ public class TestGraph {
 
 
     @Test
-    public void testEulerPaths() { // TODO mappa alla edges i grafen och i eulerPath och jämför
+    public void testEulerPaths() {
         sut = buildValidEulerGraph();
 
-        List<List<Integer>> graphEdges = mapEdges();
-        List<List<Integer>> eulerEdges = mapEdgesEulerPath(sut.eulerPath());
-        System.out.println(graphEdges);
-        System.out.println(eulerEdges);
-        testEulerPath();
+        List<Edge> graphEdges = mapEdges();
+        List<Edge> eulerEdges = mapEdgesEulerPath(sut.eulerPath());
         assertTrue(eulerEdges.containsAll(graphEdges));
         
-        // sut = buildValidEulerGraph2();
-        // sut.eulerPath();
-        // testEulerPath();
-    }
-
-    private void testEulerPath() {
-        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices();
+        graphEdges.add(new Edge(5, 4));
+        assertFalse(eulerEdges.containsAll(graphEdges));
         
-        // check that no edges remains (not the best test)
-        for(List<Integer> edges : adjacentVertices.values()) {
-            assertTrue(edges.isEmpty());
-        }
+        sut = buildValidEulerGraph2();
+        
+        graphEdges = mapEdges();
+        eulerEdges = mapEdgesEulerPath(sut.eulerPath());
+        assertTrue(eulerEdges.containsAll(graphEdges));
     }
 
-    private List<List<Integer>> mapEdges() {
-        List<List<Integer>> allEdges = new ArrayList<>();
+
+    private List<Edge> mapEdges() {
+        List<Edge> allEdges = new ArrayList<>();
         HashSet<Integer> addedVertices = new HashSet<>();
 
         HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices(); 
@@ -259,24 +245,18 @@ public class TestGraph {
                 if(addedVertices.contains(adjacentVertex)) { // skip duplicates
                     continue;
                 }
-                List<Integer> edge = new ArrayList<>();
-                edge.add(vertex);
-                edge.add(adjacentVertex);
-                allEdges.add(edge); // TODO notera - lägger till dubletter
+                allEdges.add(new Edge(vertex, adjacentVertex));
             }
         }
         return allEdges;
     }
 
 
-    private List<List<Integer>> mapEdgesEulerPath(List<Integer> path) {
-        List<List<Integer>> allEdges = new ArrayList<>();
+    private List<Edge> mapEdgesEulerPath(List<Integer> path) {
+        List<Edge> allEdges = new ArrayList<>();
 
         for(int i = 0; i < path.size() - 1; i ++) {
-            List<Integer> edge = new ArrayList<>();
-            edge.add(path.get(i));
-            edge.add(path.get(i + 1));
-            allEdges.add(edge);
+            allEdges.add(new Edge(path.get(i), path.get(i + 1)));
         }
         return allEdges;
     }
@@ -353,6 +333,11 @@ public class TestGraph {
         Edge(Integer _from, Integer _to) {
             from = _from;
             to = _to;
+        }
+
+        @Override
+        public String toString() {
+            return from + "-" + to;
         }
 
         @Override
