@@ -34,11 +34,16 @@ public class TestEuler {
     @Test
     public void testEulerPaths() { 
         // test assignment example graph
-        sut = buildValidEulerGraph();
-        List<Edge> graphEdges = mapAllEdges();
-        List<Edge> eulerEdges = mapEdgesEulerPath();
-        assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
-        
+        List<Edge> graphEdges = null;
+        List<Edge> eulerEdges = null;
+
+        for(int i = 0; i < 10000; i ++) {
+            sut = buildValidEulerGraph();
+            graphEdges = mapAllEdges();
+            eulerEdges = mapEdgesEulerPath();
+            assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
+        }
+    
         // add a random edge to assert it has not been travelled
         graphEdges.add(new Edge(5, 4));
         assertFalse(eulerEdges.containsAll(graphEdges));
@@ -84,19 +89,50 @@ public class TestEuler {
     private MyUndirectedGraph<Integer> buildValidEulerGraph() {
         MyUndirectedGraph<Integer> graph = new MyUndirectedGraph<>();
 
-        for(int i = 1; i <= 5; i ++) {
-            graph.addVertex(i);
+        ArrayList<Integer> vertices = new ArrayList<>();
+        for(int i = 1; i <= 7; i ++) {
+            vertices.add(i);
         }
-        graph.addEdge(1, 2);
-        graph.addEdge(1, 3);
-        graph.addEdge(1, 4);
-        graph.addEdge(1, 5);
+        Collections.shuffle(vertices);
+
+        for(Integer vertex : vertices) {
+            graph.addVertex(vertex);
+        }
+
+        ArrayList<Edge> edges = new ArrayList<>();
+        edges.add(new Edge(1, 2));
+        edges.add(new Edge(1, 3));
+        edges.add(new Edge(1, 4));
+        edges.add(new Edge(1, 5));
         
-        graph.addEdge(3, 2);
-        graph.addEdge(3, 4);
-        graph.addEdge(3, 5);
+        edges.add(new Edge(3, 2));
+        edges.add(new Edge(3, 4));
+        edges.add(new Edge(3, 5));
         
-        graph.addEdge(2, 4);
+        edges.add(new Edge(2, 4));
+
+
+        edges.add(new Edge(2, 6));
+        edges.add(new Edge(4, 6));
+        edges.add(new Edge(6, 7));
+        edges.add(new Edge(4, 7));
+        
+        Collections.shuffle(edges);
+
+        for(Edge edge : edges) {
+            graph.addEdge(edge.to, edge.from);
+        }
+
+        // graph.addEdge(1, 2);
+        // graph.addEdge(1, 3);
+        // graph.addEdge(1, 4);
+        // graph.addEdge(1, 5);
+        
+        // graph.addEdge(3, 2);
+        // graph.addEdge(3, 4);
+        // graph.addEdge(3, 5);
+        
+        // graph.addEdge(2, 4);
 
         return graph;
     }
@@ -107,14 +143,15 @@ public class TestEuler {
         for(int i = 1; i <= 4; i ++) {
             graph.addVertex(i);
         }
+
         graph.addEdge(1, 2);
         graph.addEdge(1, 3);
         graph.addEdge(1, 4);
         
-        graph.addEdge(3, 2);
-        graph.addEdge(3, 4);
-        
         graph.addEdge(2, 4);
+
+        graph.addEdge(2, 2);
+        graph.addEdge(3, 4);
 
         return graph;
     }
