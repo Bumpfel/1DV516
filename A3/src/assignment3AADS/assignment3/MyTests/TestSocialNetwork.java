@@ -1,7 +1,12 @@
 package assignment3AADS.assignment3.MyTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import assignment3AADS.assignment3.generic.MySocialNetwork;
@@ -9,10 +14,13 @@ import assignment3AADS.assignment3.generic.MySocialNetwork;
 public class TestSocialNetwork {
     private MySocialNetwork<Integer> sut;
 
+    @Before
+    public void setup() {
+        sut = createTestGraph();
+    }
+
     @Test
     public void testNumberOfPeopleAtFriendshipDistance() {
-        sut = createExampleGraph();
-        
         int expected = 9;
         int actual = sut.numberOfPeopleAtFriendshipDistance(5, 1);
         assertEquals(expected, actual);
@@ -29,8 +37,6 @@ public class TestSocialNetwork {
     
     @Test
     public void testFurthestDistanceInFriendshipRelationships () {
-        sut = createExampleGraph();
-
         int expected = 3;
         int actual = sut.furthestDistanceInFriendshipRelationships(5);
         assertEquals(expected, actual);
@@ -38,10 +44,47 @@ public class TestSocialNetwork {
         expected = 5;
         actual = sut.furthestDistanceInFriendshipRelationships(13);
         assertEquals(expected, actual);
+
+        expected = 4;
+        actual = sut.furthestDistanceInFriendshipRelationships(7);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testPossibleFriends() {
+        // test friends of 5
+        List<Integer> expected = new ArrayList<>();
+        expected.add(3);
+        expected.add(10);
+        List<Integer> actual = sut.possibleFriends(5);
+
+        assertEquals(expected.size(), actual.size());
+        for(Integer n : expected) {
+            assertTrue(actual.contains(n));
+        }
+
+        // test friends of 10
+        expected.clear();
+        expected.add(5);
+        actual = sut.possibleFriends(10);
+
+        assertEquals(expected.size(), actual.size());
+        for(Integer n : expected) {
+            assertTrue(actual.contains(n));
+        }
+
+        // test friends of 13
+        expected.clear();
+        actual = sut.possibleFriends(13);
+
+        assertEquals(expected.size(), actual.size());
+        for(Integer n : expected) {
+            assertTrue(actual.contains(n));
+        }
     }
 
 
-    private static MySocialNetwork<Integer> createExampleGraph() {
+    private static MySocialNetwork<Integer> createTestGraph() {
         MySocialNetwork<Integer> graph = new MySocialNetwork<>();
         for(int i = 1; i <= 15; i ++) {
             graph.addVertex(i);

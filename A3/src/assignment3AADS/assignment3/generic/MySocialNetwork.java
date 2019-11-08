@@ -8,6 +8,8 @@ import java.util.Queue;
 import java.util.Set;
 
 public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3SocialNetwork<T> {
+    private int mFurthestDistanceInFriendshipRelationships;
+    private List<T> mPossibleFriends;
 
     public static void main(String[] args) {
         MySocialNetwork<Integer> graph = createExampleGraph();
@@ -18,27 +20,21 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
 
     @Override
     public int numberOfPeopleAtFriendshipDistance(T vertex, int distance) {
-
-        List<T> nodes = breadthFirstTraversal(vertex, distance);
-        System.out.println(nodes);
-        return nodes.size();
+        return breadthFirstTraversal(vertex, distance, 0).size();
     }
 
     @Override
     public int furthestDistanceInFriendshipRelationships(T vertex) {
-        breadthFirstTraversal(vertex, -1);
-        return maxDistance;
+        breadthFirstTraversal(vertex, -1, 0);
+        return mFurthestDistanceInFriendshipRelationships;
     }
 
     @Override
     public List<T> possibleFriends(T vertex) {
-    	return null;
+        return breadthFirstTraversal(vertex, 2, 3);
     }
 
-
-    int maxDistance;
-
-    List<T> breadthFirstTraversal(T root, final int DISTANCE) {
+    List<T> breadthFirstTraversal(T root, final int DISTANCE, int requiredCommonFriends) {
         Set<T> visited = new LinkedHashSet<>();
         List<T> verticesAtDistance = new ArrayList<>();
         Queue<T> queue = new LinkedList<>();
@@ -47,22 +43,21 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
         int currentLevel = 0;
         int iteration = 0;
         int verticesAtLevel = queue.size();
-        System.out.println();
-        System.out.println("-- Searching for vertices at level " + DISTANCE);
+        // System.out.println();
+        // System.out.println("-- Searching for vertices at level " + DISTANCE);
         while (!queue.isEmpty()) {
             if(iteration == verticesAtLevel) {
                 if(currentLevel == DISTANCE) {
-                    System.out.println("done. terminating search");
+                    // System.out.println("done. terminating search");
                     break;
                 }
                 verticesAtLevel = queue.size();
                 iteration = 0;
                 currentLevel ++;
-                maxDistance = currentLevel;
-                System.out.println("-- Level " + currentLevel + " - " + verticesAtLevel + " neighbour(s) --");
+                // System.out.println("-- Level " + currentLevel + " - " + verticesAtLevel + " neighbour(s) --");
             }
             
-            System.out.println("visited " + queue.peek() + " at level " + currentLevel);
+            // System.out.println("visited " + queue.peek() + " at level " + currentLevel);
 
             T vertex = queue.poll();
 
@@ -71,13 +66,35 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
                     visited.add(adjacentVertex);
                     queue.add(adjacentVertex);
                     if(currentLevel + 1 == DISTANCE) {
-                        verticesAtDistance.add(adjacentVertex);
+                        int commonFriends = 0;
+                        if(requiredCommonFriends > 0) {
+                            commonFriends = countCommonAdjacentFriends(root, adjacentVertex);
+                        }
+                        if(commonFriends >= requiredCommonFriends) {
+                            verticesAtDistance.add(adjacentVertex);
+                        }
                     }
                 }
             }
             iteration ++;
         }
+        mFurthestDistanceInFriendshipRelationships = currentLevel;
         return verticesAtDistance;
+    }
+
+
+    private int countCommonAdjacentFriends(T person1, T person2) {
+        // List<T> commonFriends = new ArrayList<>();
+        int commonFriends = 0;
+
+        for(T friendOfPerson1 : adjacentVertices.get(person1)) {
+            if(adjacentVertices.get(person2).contains(friendOfPerson1)) {
+                // commonFriends.add(friendOfPerson1);
+                commonFriends ++;
+            }
+        }
+        System.out.println(person1 + " has " + commonFriends + " common friends with " + person2);
+        return commonFriends;
     }
 
     private static MySocialNetwork<Integer> createExampleGraph() {
