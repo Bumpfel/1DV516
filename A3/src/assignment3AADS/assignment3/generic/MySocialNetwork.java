@@ -26,7 +26,8 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
 
     @Override
     public int furthestDistanceInFriendshipRelationships(T vertex) {
-        return 0;
+        breadthFirstTraversal(vertex, -1);
+        return maxDistance;
     }
 
     @Override
@@ -34,6 +35,8 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
     	return null;
     }
 
+
+    int maxDistance;
 
     List<T> breadthFirstTraversal(T root, final int DISTANCE) {
         Set<T> visited = new LinkedHashSet<>();
@@ -55,6 +58,7 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
                 verticesAtLevel = queue.size();
                 iteration = 0;
                 currentLevel ++;
+                maxDistance = currentLevel;
                 System.out.println("-- Level " + currentLevel + " - " + verticesAtLevel + " neighbour(s) --");
             }
             

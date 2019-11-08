@@ -27,10 +27,17 @@ public class TestSocialNetwork {
 
     }
     
+    @Test
     public void testFurthestDistanceInFriendshipRelationships () {
         sut = createExampleGraph();
 
+        int expected = 3;
+        int actual = sut.furthestDistanceInFriendshipRelationships(5);
+        assertEquals(expected, actual);
 
+        expected = 5;
+        actual = sut.furthestDistanceInFriendshipRelationships(13);
+        assertEquals(expected, actual);
     }
 
 
