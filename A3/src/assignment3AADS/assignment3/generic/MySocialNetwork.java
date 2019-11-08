@@ -1,7 +1,7 @@
 package assignment3AADS.assignment3.generic;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -9,13 +9,12 @@ import java.util.Set;
 
 public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3SocialNetwork<T> {
     private int mFurthestDistanceInFriendshipRelationships;
-    private List<T> mPossibleFriends;
 
     public static void main(String[] args) {
         MySocialNetwork<Integer> graph = createExampleGraph();
 
-        // System.out.println(graph);
-        graph.numberOfPeopleAtFriendshipDistance(5, 2);
+        graph.possibleFriends(5);
+        // graph.numberOfPeopleAtFriendshipDistance(5, 2);
     }
 
     @Override
@@ -34,66 +33,56 @@ public class MySocialNetwork<T> extends MyUndirectedGraph<T> implements A3Social
         return breadthFirstTraversal(vertex, 2, 3);
     }
 
-    List<T> breadthFirstTraversal(T root, final int DISTANCE, int requiredCommonFriends) {
-        Set<T> visited = new LinkedHashSet<>();
+    private List<T> breadthFirstTraversal(T root, int distance, int requiredCommonFriends) {
+        Set<T> visited = new HashSet<>();
         List<T> verticesAtDistance = new ArrayList<>();
         Queue<T> queue = new LinkedList<>();
         queue.add(root);
         visited.add(root);
         int currentLevel = 0;
-        int iteration = 0;
         int verticesAtLevel = queue.size();
-        // System.out.println();
-        // System.out.println("-- Searching for vertices at level " + DISTANCE);
-        while (!queue.isEmpty()) {
+        
+        for(int iteration = 0; !queue.isEmpty(); iteration ++) {
+            // level switch
             if(iteration == verticesAtLevel) {
-                if(currentLevel == DISTANCE) {
-                    // System.out.println("done. terminating search");
+                if(currentLevel == distance) {
                     break;
                 }
                 verticesAtLevel = queue.size();
                 iteration = 0;
                 currentLevel ++;
-                // System.out.println("-- Level " + currentLevel + " - " + verticesAtLevel + " neighbour(s) --");
             }
-            
-            // System.out.println("visited " + queue.peek() + " at level " + currentLevel);
-
             T vertex = queue.poll();
 
+            // iterate through adjacent vertices of current vertex, add unvisited adjavent vertices to queue
             for (T adjacentVertex : adjacentVertices.get(vertex)) {
                 if (!visited.contains(adjacentVertex)) {
                     visited.add(adjacentVertex);
                     queue.add(adjacentVertex);
-                    if(currentLevel + 1 == DISTANCE) {
-                        int commonFriends = 0;
-                        if(requiredCommonFriends > 0) {
-                            commonFriends = countCommonAdjacentFriends(root, adjacentVertex);
-                        }
+                    // at correct level (queue is populated before level is increased)
+                    if(currentLevel + 1 == distance) {
+                        int commonFriends = requiredCommonFriends > 0 ? countCommonFriends(root, adjacentVertex) : 0;
+                        
                         if(commonFriends >= requiredCommonFriends) {
                             verticesAtDistance.add(adjacentVertex);
                         }
                     }
                 }
             }
-            iteration ++;
         }
         mFurthestDistanceInFriendshipRelationships = currentLevel;
         return verticesAtDistance;
     }
 
 
-    private int countCommonAdjacentFriends(T person1, T person2) {
-        // List<T> commonFriends = new ArrayList<>();
+    private int countCommonFriends(T person1, T person2) {
         int commonFriends = 0;
 
         for(T friendOfPerson1 : adjacentVertices.get(person1)) {
             if(adjacentVertices.get(person2).contains(friendOfPerson1)) {
-                // commonFriends.add(friendOfPerson1);
                 commonFriends ++;
             }
         }
-        System.out.println(person1 + " has " + commonFriends + " common friends with " + person2);
         return commonFriends;
     }
 
