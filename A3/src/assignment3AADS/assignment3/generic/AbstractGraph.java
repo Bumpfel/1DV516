@@ -4,21 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 public abstract class AbstractGraph<T> implements A3Graph<T> {
-    protected HashMap<T, List<T>> adjacentVertices = new HashMap<>();
+    protected Map<T, List<T>> adjacentVertices = new HashMap<>();
     private boolean isAcyclic = true;
-    private boolean isConnected;
-    private List<List<T>> connectedComponents = new ArrayList<>();
+    protected T firstAddedVertex;
 
     public int size() { return adjacentVertices.size(); }
 
-    public HashMap<T, List<T>> getAdjacentVertices() { // for testing
+    public Map<T, List<T>> getAdjacentVertices() { // for testing
         return adjacentVertices;
     }
 
     public void addVertex(T vertex) {
+        if(firstAddedVertex == null) {
+            firstAddedVertex = vertex;
+        }
         adjacentVertices.putIfAbsent(vertex, new ArrayList<>());
     }
 
@@ -41,43 +45,60 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
         }
     }
 
-    private Set<T> depthFirstTraversal(T vertex, Set<T> visitedVertices, List<T> stronglyConnectedVertices, T parent) {
-        visitedVertices.add(vertex); // add current vertex to visited
+    protected void dfs(T vertex, Set<T> visited) {
+        recursiveDepthFirstTraversal(vertex, visited, null, null, null);
+    }
 
-        // build connectedComponents lists. create and add new list if this call was not recursive,
-        // or it's a directed graph and current vertex has no adjacent vertices
-        if(stronglyConnectedVertices == null || (this instanceof MyDirectedGraph && adjacentVertices.get(vertex).size() == 0)) {
-            stronglyConnectedVertices = new ArrayList<>();
-            connectedComponents.add(stronglyConnectedVertices);
+
+    protected void dfsKosaraju(T vertex, Set<T> visited, Stack<T> stack) {
+        recursiveDepthFirstTraversal(vertex, visited, stack, null, null);
+    }
+    
+    protected void dfsTransposedKosaraju(T vertex, Set<T> visited, List<T> subgraph) {
+        recursiveDepthFirstTraversal(vertex, visited, null, subgraph, null);
+    }
+
+
+
+    private void recursiveDepthFirstTraversal(T vertex, Set<T> visited, Stack<T> sccStack, List<T> subgraph, T parent) {
+        visited.add(vertex); // add current vertex to visited
+        if(subgraph != null) { // used by kosarajus' algorithm
+            subgraph.add(vertex);
         }
-        stronglyConnectedVertices.add(vertex);
 
         // traverse graph by visiting adjacent vertices (except the parent - where it came from (undirected graphs only))
         for(T adjacentVertex : adjacentVertices.get(vertex)) {
             if(!adjacentVertex.equals(parent)) {
-                if(visitedVertices.contains(adjacentVertex)) { // vertex was already visited and not a parent. it's a cyclic graph
+                if(visited.contains(adjacentVertex)) { // vertex was already visited and not a parent. it's a cyclic graph
                     isAcyclic = false;
                 } else {
-                    depthFirstTraversal(adjacentVertex, visitedVertices, stronglyConnectedVertices, vertex); // go to next vertex
+                    recursiveDepthFirstTraversal(adjacentVertex, visited, sccStack, subgraph, vertex); // visit next vertex
                 }
             }
         }
-        isConnected = visitedVertices.containsAll(adjacentVertices.keySet()); // graph is connected if all vertices in the graph was traversed from one root vertex
-        return visitedVertices;
+        if(sccStack != null) { // used by Kosarajus' algorithm (directed graphs)
+            sccStack.push(vertex);
+        }
     }
+  
     
-    private void analyzeGraph() {
+    /**
+     * Returns true if graph is connected
+     */
+    private boolean analyzeGraph() {
         Set<T> allVisited = new HashSet<>(); // used to hold all visited vertices during this analysis
-        connectedComponents.clear(); // clear list, so it doesn't add to potentially existing list
-        Set<T> visited = new HashSet<>(); // used to hold visited vertices during one traversal
-        
+        Set<T> visited = null;
+
         for(T vertex : adjacentVertices.keySet()) { // loop through all vertices to allow exploring disconnected vertices
             if(allVisited.contains(vertex)) { // skip vertices that were already visited during this analysis
                 continue;
             }
-            visited = depthFirstTraversal(vertex, new HashSet<>(), null, null);
+            visited = new HashSet<>(); // used to hold visited vertices during one traversal
+            dfs(vertex, visited);
             allVisited.addAll(visited);
         }
+        int visitedVertices = visited == null ? 0 : visited.size();
+        return visitedVertices == adjacentVertices.size();
     }
 
 
@@ -87,13 +108,7 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
     }
 
     public boolean isConnected() {
-        analyzeGraph();
-        return isConnected;
-    }
-
-    public List<List<T>> connectedComponents() {
-        analyzeGraph();
-        return connectedComponents; // this list is not used anywhere else in the class, so not bothering with returning a copy
+        return analyzeGraph();
     }
 
     @Override

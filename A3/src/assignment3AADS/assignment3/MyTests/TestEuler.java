@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -37,24 +38,24 @@ public class TestEuler {
         List<Edge> graphEdges = null;
         List<Edge> eulerEdges = null;
 
-        for(int i = 0; i < 10000; i ++) {
+        // for(int i = 0; i < 10000; i ++) {
             sut = buildValidEulerGraph();
             graphEdges = mapAllEdges();
             eulerEdges = mapEdgesEulerPath();
             assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
-        }
+        // }
     
         // add a random edge to assert it has not been travelled
         graphEdges.add(new Edge(5, 4));
         assertFalse(eulerEdges.containsAll(graphEdges));
         
         // test morecomplex graph from book
-        for(int i = 0; i < 10000; i ++) {
+        // for(int i = 0; i < 10000; i ++) {
             sut = buildValidComplexEulerGraph();
             graphEdges = mapAllEdges();
             eulerEdges = mapEdgesEulerPath();
             assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
-        }
+        // }
     }
 
     
@@ -62,7 +63,7 @@ public class TestEuler {
         List<Edge> allEdges = new ArrayList<>();
         HashSet<Integer> addedVertices = new HashSet<>();
 
-        HashMap<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices();
+        Map<Integer, List<Integer>> adjacentVertices = sut.getAdjacentVertices();
         for(Integer vertex : adjacentVertices.keySet()) {
             for(Integer adjacentVertex : adjacentVertices.get(vertex)) {
                 addedVertices.add(vertex);
@@ -123,17 +124,6 @@ public class TestEuler {
             graph.addEdge(edge.to, edge.from);
         }
 
-        // graph.addEdge(1, 2);
-        // graph.addEdge(1, 3);
-        // graph.addEdge(1, 4);
-        // graph.addEdge(1, 5);
-        
-        // graph.addEdge(3, 2);
-        // graph.addEdge(3, 4);
-        // graph.addEdge(3, 5);
-        
-        // graph.addEdge(2, 4);
-
         return graph;
     }
 
@@ -150,7 +140,7 @@ public class TestEuler {
         
         graph.addEdge(2, 4);
 
-        graph.addEdge(2, 2);
+        graph.addEdge(2, 3);
         graph.addEdge(3, 4);
 
         return graph;

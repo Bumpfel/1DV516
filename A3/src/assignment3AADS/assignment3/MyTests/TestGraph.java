@@ -1,13 +1,11 @@
 package assignment3AADS.assignment3.MyTests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import assignment3AADS.assignment3.generic.AbstractGraph;
@@ -16,11 +14,6 @@ import assignment3AADS.assignment3.generic.MyUndirectedGraph;
 
 public class TestGraph {
     private AbstractGraph<Integer> sut;
-
-    @Before
-    public void setup() {
-        sut = new MyUndirectedGraph<>(); // do not change type
-    }
 
     private void addElementsToGraph(int n) {
         int start = sut.size();
@@ -47,8 +40,20 @@ public class TestGraph {
         }
     }
 
+
     @Test
-    public void testIsConnected() {
+    public void testIsConnectedUndirected() {
+        sut = new MyUndirectedGraph<>();
+        checkIsConnected();
+    }
+
+    @Test
+    public void testIsConnectedDirected() {
+        sut = new MyDirectedGraph<>();
+        checkIsConnected();
+    }
+
+    private void checkIsConnected() {
         addElementsToGraph(5);
 
         assertFalse(sut.isConnected());
@@ -60,15 +65,25 @@ public class TestGraph {
         assertFalse(sut.isConnected());
 
         sut.addEdge(100, 1);
+
         if(sut instanceof MyUndirectedGraph) {
             assertTrue(sut.isConnected());
-            sut = new MyDirectedGraph<>();
-            testIsConnected();
         } else {
             assertFalse(sut.isConnected());
         }
     }
 
+    @Test
+    public void testIsConnectedDirected2() {
+        sut = new MyDirectedGraph<>();
+
+        addElementsToGraph(4);
+        sut.addEdge(0, 1);
+        sut.addEdge(1, 2);
+        sut.addEdge(1, 3);
+
+        assertTrue(sut.isConnected());
+    }
 
     @Test
     public void testIsAcyclicUndirected1() {
@@ -153,11 +168,7 @@ public class TestGraph {
         sut.addVertex(5);
 
         List<List<Integer>> actual = sut.connectedComponents();
-        assertEquals(expected.size(), actual.size());
-        for(int i = 0; i < actual.size(); i ++) {
-            assertEquals(expected.get(i).size(), actual.get(i).size());
-            assertTrue(actual.get(i).containsAll(expected.get(i)));
-        }
+        assertTrue(actual.containsAll(expected));
     }
 
 
@@ -174,14 +185,15 @@ public class TestGraph {
         expected.add(list1);
         expected.add(list2);
         expected.add(list3);
-
-        list2.add(4);
-        list3.add(5);
-        
+  
         for(int i = 1; i < 4; i++) {
             sut.addVertex(i);
             list1.add(i);
         }
+
+        list2.add(4);
+        list3.add(5);
+      
         sut.addVertex(4);
         sut.addVertex(5);
 
@@ -189,14 +201,45 @@ public class TestGraph {
         sut.addEdge(1, 4);
         sut.addEdge(2, 1);
         sut.addEdge(3, 2);
+
         sut.addVertex(5);
 
         List<List<Integer>> actual = sut.connectedComponents();
+        assertTrue(actual.containsAll(expected));
+    }
 
-        assertEquals(expected.size(), actual.size());
-        for(int i = 0; i < actual.size(); i ++) {
-            assertEquals(expected.get(i).size(), actual.get(i).size());
-            assertTrue(actual.get(i).containsAll(expected.get(i)));
+    @Test
+    public void testConnectedComponentsDirected2() {
+        sut = new MyDirectedGraph<>();
+        
+        List<List<Integer>> expected = new ArrayList<>();
+        
+        List<Integer> list1 = new ArrayList<>();
+        List<Integer> list2 = new ArrayList<>();
+        List<Integer> list3 = new ArrayList<>();
+
+        expected.add(list1);
+        expected.add(list2);
+        expected.add(list3);
+
+        for(int i = 0; i < 3; i++) {
+            sut.addVertex(i);
+            list1.add(i);
         }
+
+        list2.add(3);
+        list3.add(4);
+       
+        sut.addVertex(3);
+        sut.addVertex(4);
+
+        sut.addEdge(0, 2);
+        sut.addEdge(0, 3);
+        sut.addEdge(1, 0);
+        sut.addEdge(2, 1);
+        sut.addEdge(3, 4);
+        
+        List<List<Integer>> actual = sut.connectedComponents();
+        assertTrue(actual.containsAll(expected));
     }
 }
