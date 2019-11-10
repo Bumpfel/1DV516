@@ -2,6 +2,7 @@ package assignment3AADS.assignment3.generic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
     @Override
     public boolean isConnected() {
         Set<T> visited = new HashSet<>();
-        dfs(firstAddedVertex, visited);
+        dfs(adjacentVertices.keySet().iterator().next(), visited);
         return visited.size() == adjacentVertices.size();
     }
 
@@ -70,21 +71,21 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
     public List<T> eulerPath() {
         if(hasEulerPath()) {
             // get start vertex (any for circuit, vertex with uneven degree for path)
-            T startVertex = oddVertex == null ? firstAddedVertex : oddVertex;
+            Iterator<T> it = adjacentVertices.keySet().iterator();
+            T startVertex = oddVertex == null ? it.next() : oddVertex;
             
             List<T> path = new ArrayList<>();
             path.add(startVertex);
  
-            for(int i = 0; i < path.size() ; i ++) {
+            for(int i = 0; i < path.size(); i ++) {
                 T vertex = path.get(i);
                 if(adjacentVertices.get(vertex).size() > 0) { // has untraversed paths
                     List<T> partialPath = dfsEuler(vertex);
                     // splice partial path into path
-                    path.remove(vertex);
-                    path.addAll(i, partialPath);
+                    partialPath.remove(0);
+                    path.addAll(i + 1, partialPath);
                 }
             }
-            System.out.println();
 
             restoreGraph();
             return path;
@@ -111,7 +112,7 @@ public class MyUndirectedGraph<T> extends AbstractGraph<T> {
             }
             for (T adjacentVertex : adjacentVertices.get(vertex)) {
                 visitNext.push(adjacentVertex);
-                visitedEdges.push(new Edge(vertex, adjacentVertex));
+                visitedEdges.add(new Edge(vertex, adjacentVertex));
             }
         }
         return visited;

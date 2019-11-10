@@ -11,7 +11,6 @@ import java.util.Stack;
 public abstract class AbstractGraph<T> implements A3Graph<T> {
     protected Map<T, List<T>> adjacentVertices = new HashMap<>();
     private boolean isAcyclic = true;
-    protected T firstAddedVertex;
 
     public int size() { return adjacentVertices.size(); }
 
@@ -20,9 +19,6 @@ public abstract class AbstractGraph<T> implements A3Graph<T> {
     }
 
     public void addVertex(T vertex) {
-        if(firstAddedVertex == null) {
-            firstAddedVertex = vertex;
-        }
         adjacentVertices.putIfAbsent(vertex, new ArrayList<>());
     }
 

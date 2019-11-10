@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,24 +37,24 @@ public class TestEuler {
         List<Edge> graphEdges = null;
         List<Edge> eulerEdges = null;
 
-        // for(int i = 0; i < 10000; i ++) {
+        for(int i = 0; i < 10000; i ++) {
             sut = buildValidEulerGraph();
             graphEdges = mapAllEdges();
             eulerEdges = mapEdgesEulerPath();
             assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
-        // }
+        }
     
         // add a random edge to assert it has not been travelled
         graphEdges.add(new Edge(5, 4));
         assertFalse(eulerEdges.containsAll(graphEdges));
         
         // test morecomplex graph from book
-        // for(int i = 0; i < 10000; i ++) {
+        for(int i = 0; i < 10000; i ++) {
             sut = buildValidComplexEulerGraph();
             graphEdges = mapAllEdges();
             eulerEdges = mapEdgesEulerPath();
             assertTrue(eulerEdges.containsAll(graphEdges) && eulerEdges.size() == graphEdges.size());
-        // }
+        }
     }
 
     
